@@ -7,7 +7,7 @@ import tf
 import os, pickle
 from geometry_msgs.msg import PoseWithCovarianceStamped, Point, Quaternion
 
-POSE_FILE = os.path.join(os.environ['HOME'], 'state/initial_pose.yml')
+POSE_FILE = os.path.join(os.environ['HOME'], 'state/initial_pose.pck')
 
 def pprint_str(l):
     return " ".join(["%.3f"%x for x in l])
@@ -65,16 +65,34 @@ if __name__ == '__main__':
             #rospy.loginfo("localization_saver: publishing pose_msg: %s"%str(pose_msg))
             pose_pub.publish(pose_msg)
 
-    #save the current transform every few seconds
+    # Save and publish the current transform every five seconds
     while not rospy.is_shutdown():
 
         try:
             (trans,rot) = listener.lookupTransform('/map', '/odom_combined', rospy.Time(0))
             if check_localized(trans):
                 #rospy.loginfo("localization_saver: saving trans: %s, rot: %s"%(pprint_str(trans), pprint_str(rot)))
+                if not os.path.exists(os.path.dirname(POSE_FILE)):
+                    os.mkdir(os.path.dirname(POSE_FILE))
                 outfile = open(POSE_FILE, 'w')
                 pickle.dump((trans,rot), outfile)
                 outfile.close()
+
+            # Broadcast the current location on /currentpose
+            pose_pub = rospy.Publisher('/currentpose', PoseWithCovarianceStamped)
+            pose_msg = PoseWithCovarianceStamped()
+            pose_msg.header.stamp = rospy.Time.now()
+            pose_msg.header.frame_id = "/map"
+            pose_msg.pose.pose.position = Point(*trans)
+            pose_msg.pose.pose.orientation = Quaternion(*rot)
+            pose_msg.pose.covariance = [0.25, 0.0, 0.0, 0.0, 0.0, 0.0, 
+                                        0.0, 0.25, 0.0, 0.0, 0.0, 0.0, 
+                                        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+                                        0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 
+                                        0.0, 0.0, 0.0, 0.0, 0.1, 0.0, 
+                                        0.0, 0.0, 0.0, 0.0, 0.0, 0.1]
+            #rospy.loginfo("localization_saver: publishing pose_msg: %s"%str(pose_msg))
+            pose_pub.publish(pose_msg)
 
         except (tf.LookupException, tf.ConnectivityException):
             rospy.loginfo("localization_saver: tf exception")
