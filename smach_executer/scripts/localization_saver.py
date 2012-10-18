@@ -20,14 +20,15 @@ if __name__ == '__main__':
 
     rospy.init_node('localization_saver')
     listener = tf.TransformListener()
-    pose_pub = rospy.Publisher('/initialpose', PoseWithCovarianceStamped)
+    initial_pose_pub = rospy.Publisher('/initialpose', PoseWithCovarianceStamped)
+    current_pose_pub = rospy.Publisher('/robot_pose', PoseWithCovarianceStamped)
 
     #wait for the map frame to exist
     trans = 0
     rot = 0
     while not rospy.is_shutdown():
         try:
-            (trans,rot) = listener.lookupTransform('/map', '/odom_combined', rospy.Time(0))
+            (trans,rot) = listener.lookupTransform('/map', '/base_link', rospy.Time(0))
             rospy.loginfo("localization_saver: tf says trans: %s, rot: %s"%(pprint_str(trans), pprint_str(rot)))
         except (tf.LookupException, tf.ConnectivityException):
             rospy.loginfo("localization_saver: map frame not available yet")
@@ -63,40 +64,44 @@ if __name__ == '__main__':
                                         0.0, 0.0, 0.0, 0.0, 0.1, 0.0, 
                                         0.0, 0.0, 0.0, 0.0, 0.0, 0.1]
             #rospy.loginfo("localization_saver: publishing pose_msg: %s"%str(pose_msg))
-            pose_pub.publish(pose_msg)
+            initial_pose_pub.publish(pose_msg)
 
     # Save and publish the current transform every five seconds
     while not rospy.is_shutdown():
+        rospy.sleep(5.0)
 
         try:
-            (trans,rot) = listener.lookupTransform('/map', '/odom_combined', rospy.Time(0))
-            if check_localized(trans):
-                #rospy.loginfo("localization_saver: saving trans: %s, rot: %s"%(pprint_str(trans), pprint_str(rot)))
+            (trans,rot) = listener.lookupTransform('/map', '/base_link', rospy.Time(0))
+            if not check_localized(trans):
+                # The current transform is not localized; ignore it
+                continue
+
+            #rospy.loginfo("localization_saver: saving trans: %s, rot: %s"%(pprint_str(trans), pprint_str(rot)))
+            try:
                 if not os.path.exists(os.path.dirname(POSE_FILE)):
                     os.mkdir(os.path.dirname(POSE_FILE))
                 outfile = open(POSE_FILE, 'w')
                 pickle.dump((trans,rot), outfile)
                 outfile.close()
+            except Exception, e:
+                rospy.loginfo("localization_saver: Error saving to file")
 
-            # Broadcast the current location on /currentpose
-            pose_pub = rospy.Publisher('/currentpose', PoseWithCovarianceStamped)
+            # Broadcast the current location on /robot_pose
             pose_msg = PoseWithCovarianceStamped()
             pose_msg.header.stamp = rospy.Time.now()
             pose_msg.header.frame_id = "/map"
             pose_msg.pose.pose.position = Point(*trans)
             pose_msg.pose.pose.orientation = Quaternion(*rot)
             pose_msg.pose.covariance = [0.25, 0.0, 0.0, 0.0, 0.0, 0.0, 
-                                        0.0, 0.25, 0.0, 0.0, 0.0, 0.0, 
-                                        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
-                                        0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 
-                                        0.0, 0.0, 0.0, 0.0, 0.1, 0.0, 
-                                        0.0, 0.0, 0.0, 0.0, 0.0, 0.1]
+                0.0, 0.25, 0.0, 0.0, 0.0, 0.0, 
+                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+                0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 
+                0.0, 0.0, 0.0, 0.0, 0.1, 0.0, 
+                0.0, 0.0, 0.0, 0.0, 0.0, 0.1]
             #rospy.loginfo("localization_saver: publishing pose_msg: %s"%str(pose_msg))
-            pose_pub.publish(pose_msg)
+            current_pose_pub.publish(pose_msg)
 
         except (tf.LookupException, tf.ConnectivityException):
             rospy.loginfo("localization_saver: tf exception")
             continue
-
-        rospy.sleep(5.0)
 

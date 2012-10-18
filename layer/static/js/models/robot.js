@@ -18,15 +18,24 @@ function( Ember, DS, App, ros, Action) {
     forearm_camera_url: DS.attr('string'),
     battery: -1,
     plugged_in_value: -1,
-    pose: { 'x': 9.424 , 'y': 29.524 },
+    pose: { 'x': -1 , 'y': -1 },
     plugged_in: function() {
       return (this.get('plugged_in_value') > 0);
     }.property('plugged_in_value'),
 
     map_coords: function() {
       var pose = this.get('pose');
-      var map_x = -3.2371041 * pose.x + -7.70845759 * pose.y + 564.53259318;
-      var map_y = -7.90508822 * pose.x + 3.38653133 * pose.y + 295.37609582;
+      var map_x, map_y;
+      if (pose.x == -1) {
+        map_x = -1;
+      } else {
+        map_x = -3.2371041 * pose.x + -7.70845759 * pose.y + 564.53259318;
+      }
+      if (pose.y == -1) {
+        map_y = -1;
+      } else {
+        map_y = -7.90508822 * pose.x + 3.38653133 * pose.y + 295.37609582;
+      }
       return {'x': map_x, 'y': map_y};
     }.property('pose'),
 
@@ -44,21 +53,17 @@ function( Ember, DS, App, ros, Action) {
         });
 
         // Also subscribe to robot location changes
-        /*
         var loc_topic = new ros.Topic({
-          name: '/tf_XXXX',
-          messageType: 'XXXX'
+          name: '/robot_pose',
+          messageType: 'geometry_msgs/PoseWithCovarianceStamped'
         });
         var _this = this;
-        topic.subscribe(function(message) {
-          _this.set('pose_x', message.xxx.yyy);
-          _this.set('pose_y', message.xxx.yyy);
+        loc_topic.subscribe(function(message) {
           _this.set('pose', {
-            'x' : message.xxx,
-            'y' : message.yyy
-            };
+            'x' : message.pose.pose.position.x,
+            'y' : message.pose.pose.position.y
+            });
         });
-        */
       }
     }.observes('service_url'),
 

@@ -23,10 +23,18 @@ define([
           .attr("width", w)
           .attr("height", h);
 
+      // Observer so that when the places in the database change, we update
+      // the map
       var content = this.get('controller').get('content');
       var places = content.places;
-      places.addArrayObserver( this);
+      places.addArrayObserver(this);
+
+      // Add an observer so that whenever the robot's position changes, we
+      // update the map
+      var robot = content.robot;
+      robot.addObserver('map_coords', this, 'drawRooms');
     },
+
     arrayWillChange: function() {},
     arrayDidChange: function() {
       this.drawRooms();
@@ -96,7 +104,7 @@ define([
       var map = d3.select("#mapsvg");
       var _this = this;
 
-      if ((robot.pose_x == -1) || (robot.pose_y == -1)) {
+      if ((robot.get('map_coords').x == -1) || (robot.get('map_coords').y == -1)) {
         return;
       }
 
