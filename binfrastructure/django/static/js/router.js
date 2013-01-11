@@ -21,6 +21,7 @@ function(
         route: '/',
 
         connectOutlets: function(router) {
+          router.get('applicationController')
         }
       }),
     })

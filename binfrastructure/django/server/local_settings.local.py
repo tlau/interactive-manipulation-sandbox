@@ -11,12 +11,12 @@ DATABASES = {
 }
 
 
-MEDIA_ROOT = '/home/vagrant/continuousop/django/static/media/'
+MEDIA_ROOT = '/home/vagrant/binfrastructure/django/static/media/'
 
 STATICFILES_DIRS = (
-    "/home/vagrant/continuousop/django/static/",
+    "/home/vagrant/binfrastructure/django/static/",
 )
 
 TEMPLATE_DIRS = (
-    '/home/vagrant/continuousop/django/templates/'
+    '/home/vagrant/binfrastructure/django/templates/'
 )
