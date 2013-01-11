@@ -1,0 +1,28 @@
+require 'vagrant-ansible'
+
+Vagrant::Config.run do |config|
+  config.vm.box     = "precise64"
+  config.vm.box_url = "http://files.vagrantup.com/precise64.box"
+
+  # Forward guest port to host port
+  config.vm.forward_port 8001, 8001
+#  config.vm.forward_port 9090, 9090
+
+  # Change IP address for Vagrant host
+  config.vm.customize ["modifyvm", :id, "--natnet1", "10.101.100/24"]
+  # Change name of VM
+  config.vm.customize ["modifyvm", :id, "--name", "binfrastructure"]
+
+  # Share the host folder (3rd argument) with the guest (2nd argument)
+  config.vm.share_folder "binfrastructure", "~/binfrastructure", "../../../binfrastructure"
+
+  config.vm.provision :ansible do |ansible|
+    # Point Vagrant at the location of your playbook you want to run
+    ansible.playbook = "webserver.yml"
+
+    # The Vagrant VM will be put in this host group change this should
+    # match the host group in your playbook you want to test
+    ansible.hosts = "webservers"
+  end
+end
+

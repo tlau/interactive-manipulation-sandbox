@@ -1,0 +1,565 @@
+[
+  {
+    "pk": 1,
+    "model": "auth.user",
+    "fields": {
+      "username": "layerman",
+      "first_name": "Layer",
+      "last_name": "Manager",
+      "is_active": true,
+      "is_superuser": true,
+      "is_staff": true,
+      "last_login": "2012-10-31T00:59:30.640Z",
+      "groups": [],
+      "user_permissions": [],
+      "password": "pbkdf2_sha256$10000$5TgEIXuVe8D9$tAu7tiwFqjbIYHRWbXq4E4AiCLjvfX8KIhYPzno3ItE=",
+      "email": "layerman@willowgarage.com",
+      "date_joined": "2012-10-30T21:02:30.036Z"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "world.place",
+    "fields": {
+      "map_height": null,
+      "description": "",
+      "map_width": null,
+      "tags": "office Julius David",
+      "pose_x": 7.437,
+      "pose_y": 29.459,
+      "image": "static/images/IMG_20120913_184101.jpg",
+      "pose_angle": 2.969,
+      "map_x": null,
+      "map_y": null,
+      "name": "Office of Julius and David"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "world.place",
+    "fields": {
+      "map_height": 23,
+      "description": "",
+      "map_width": 28,
+      "tags": "Chad Jenkins Brown office",
+      "pose_x": 7.404,
+      "pose_y": 30.788,
+      "image": "static/images/IMG_20120913_185038.jpg",
+      "pose_angle": 2.638,
+      "map_x": 280,
+      "map_y": 348,
+      "name": "Chad's office"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "world.place",
+    "fields": {
+      "map_height": 33,
+      "description": "",
+      "map_width": 28,
+      "tags": "",
+      "pose_x": 5.818,
+      "pose_y": 23.091,
+      "image": "static/images/IMG_20120913_185023.jpg",
+      "pose_angle": 2.415,
+      "map_x": 341,
+      "map_y": 339,
+      "name": "Brandon/Binney/Adam's office"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "world.place",
+    "fields": {
+      "map_height": null,
+      "description": "",
+      "map_width": null,
+      "tags": "conference room",
+      "pose_x": 0.0,
+      "pose_y": 0.0,
+      "image": "static/images/IMG_20120913_185110.jpg",
+      "pose_angle": null,
+      "map_x": null,
+      "map_y": null,
+      "name": "The Cave"
+    }
+  },
+  {
+    "pk": 5,
+    "model": "world.place",
+    "fields": {
+      "map_height": 97,
+      "description": "",
+      "map_width": 42,
+      "tags": "robots space",
+      "pose_x": 18.639,
+      "pose_y": 22.715,
+      "image": "static/images/IMG_20120913_185126.jpg",
+      "pose_angle": 0.0,
+      "map_x": 307,
+      "map_y": 149,
+      "name": "Green Room"
+    }
+  },
+  {
+    "pk": 6,
+    "model": "world.place",
+    "fields": {
+      "map_height": 78,
+      "description": "",
+      "map_width": 181,
+      "tags": "food kitchen",
+      "pose_x": 35.398,
+      "pose_y": 19.234,
+      "image": "static/images/IMG_20120913_185149.jpg",
+      "pose_angle": -3.139,
+      "map_x": 279,
+      "map_y": 50,
+      "name": "Cafeteria"
+    }
+  },
+  {
+    "pk": 7,
+    "model": "world.place",
+    "fields": {
+      "map_height": 75,
+      "description": "",
+      "map_width": 70,
+      "tags": "pool billiards",
+      "pose_x": 16.606,
+      "pose_y": 34.622,
+      "image": "static/images/IMG_20120920_164306.jpg",
+      "pose_angle": 0.972,
+      "map_x": 187,
+      "map_y": 235,
+      "name": "The pool room"
+    }
+  },
+  {
+    "pk": 8,
+    "model": "world.place",
+    "fields": {
+      "map_height": 73,
+      "description": "",
+      "map_width": 102,
+      "tags": "conference meeting",
+      "pose_x": 20.867,
+      "pose_y": 39.983,
+      "image": "static/images/IMG_20120926_175714.jpg",
+      "pose_angle": 0.135,
+      "map_x": 72,
+      "map_y": 190,
+      "name": "The Cathedral"
+    }
+  },
+  {
+    "pk": 9,
+    "model": "world.place",
+    "fields": {
+      "map_height": 28,
+      "description": "",
+      "map_width": 34,
+      "tags": "stefan nusser",
+      "pose_x": 39.553,
+      "pose_y": 50.261,
+      "image": "static/images/IMG_20120926_182001.jpg",
+      "pose_angle": 1.017,
+      "map_x": 2,
+      "map_y": 121,
+      "name": "Stefan's office"
+    }
+  },
+  {
+    "pk": 10,
+    "model": "world.place",
+    "fields": {
+      "map_height": 29,
+      "description": "",
+      "map_width": 33,
+      "tags": "leila takayama",
+      "pose_x": 43.915,
+      "pose_y": 48.195,
+      "image": "static/images/IMG_20120926_182006.jpg",
+      "pose_angle": 0.972,
+      "map_x": 2,
+      "map_y": 90,
+      "name": "Leila's office"
+    }
+  },
+  {
+    "pk": 11,
+    "model": "world.place",
+    "fields": {
+      "map_height": 39,
+      "description": "",
+      "map_width": 37,
+      "tags": "steve cousins ceo",
+      "pose_x": 47.376,
+      "pose_y": 46.716,
+      "image": "",
+      "pose_angle": 1.165,
+      "map_x": 2,
+      "map_y": 50,
+      "name": "Steve's office"
+    }
+  },
+  {
+    "pk": 12,
+    "model": "world.place",
+    "fields": {
+      "map_height": 34,
+      "description": "",
+      "map_width": 23,
+      "tags": "kaijen matei",
+      "pose_x": 50.604,
+      "pose_y": 42.586,
+      "image": "static/images/IMG_20120926_182016.jpg",
+      "pose_angle": -0.504,
+      "map_x": 66,
+      "map_y": 4,
+      "name": "Kaijen/Matei's office"
+    }
+  },
+  {
+    "pk": 13,
+    "model": "world.place",
+    "fields": {
+      "map_height": 20,
+      "description": "Power Outlet in green room",
+      "map_width": 20,
+      "tags": "outlet",
+      "pose_x": 21.661,
+      "pose_y": 25.623,
+      "image": "",
+      "pose_angle": 2.709,
+      "map_x": 280,
+      "map_y": 200,
+      "name": "power outlet #2"
+    }
+  },
+  {
+    "pk": 14,
+    "model": "world.place",
+    "fields": {
+      "map_height": 20,
+      "description": "Power outlet in IM hallway",
+      "map_width": 20,
+      "tags": "outlet",
+      "pose_x": 9.304,
+      "pose_y": 29.383,
+      "image": "static/images/IMG_20120926_175655.jpg",
+      "pose_angle": 1.092,
+      "map_x": 300,
+      "map_y": 305,
+      "name": "power outlet #1"
+    }
+  },
+  {
+    "pk": 15,
+    "model": "world.place",
+    "fields": {
+      "map_height": 33,
+      "description": "",
+      "map_width": 28,
+      "tags": "",
+      "pose_x": 7.437,
+      "pose_y": 29.459,
+      "image": "static/images/IMG_20120926_175655.jpg",
+      "pose_angle": 2.969,
+      "map_x": 310,
+      "map_y": 338,
+      "name": "Julius/David's office"
+    }
+  },
+  {
+    "pk": 16,
+    "model": "world.place",
+    "fields": {
+      "map_height": 27,
+      "description": "",
+      "map_width": 38,
+      "tags": "weights treadmill",
+      "pose_x": 31.956,
+      "pose_y": 53.580,
+      "image": "",
+      "pose_angle": 1.235,
+      "map_x": 2,
+      "map_y": 222,
+      "name": "Exercise room"
+    }
+  },
+  {
+    "pk": 17,
+    "model": "world.place",
+    "fields": {
+      "map_height": 32,
+      "description": "",
+      "map_width": 63,
+      "tags": "conference room fishtank",
+      "pose_x": 43.069,
+      "pose_y": 23.482,
+      "image": "",
+      "pose_angle": -0.228,
+      "map_x": 184,
+      "map_y": 4,
+      "name": "Tank"
+    }
+  },
+  {
+    "pk": 18,
+    "model": "world.place",
+    "fields": {
+      "map_height": 40,
+      "description": "",
+      "map_width": 49,
+      "tags": "bicycles",
+      "pose_x": 17.107,
+      "pose_y": 55.021,
+      "image": "",
+      "pose_angle": 2.058,
+      "map_x": 43,
+      "map_y": 331,
+      "name": "Bike racks"
+    }
+  },
+  {
+    "pk": 19,
+    "model": "world.place",
+    "fields": {
+      "map_height": 23,
+      "description": "",
+      "map_width": 28,
+      "tags": "",
+      "pose_x": 9.878,
+      "pose_y": 37.502,
+      "image": "",
+      "pose_angle": 1.204,
+      "map_x": 220,
+      "map_y": 348,
+      "name": "Office #132"
+    }
+  },
+  {
+    "pk": 20,
+    "model": "world.place",
+    "fields": {
+      "map_height": 24,
+      "description": "",
+      "map_width": 30,
+      "tags": "",
+      "pose_x": 12.681,
+      "pose_y": 44.087,
+      "image": "",
+      "pose_angle": 0.436,
+      "map_x": 154,
+      "map_y": 312,
+      "name": "Office #124"
+    }
+  },
+  {
+    "pk": 21,
+    "model": "world.place",
+    "fields": {
+      "map_height": 32,
+      "description": "",
+      "map_width": 29,
+      "tags": "",
+      "pose_x": 38.827,
+      "pose_y": 13.746,
+      "image": "",
+      "pose_angle": -1.977,
+      "map_x": 300,
+      "map_y": 4,
+      "name": "Suzanne/Jef's office"
+    }
+  },
+  {
+    "pk": 22,
+    "model": "world.place",
+    "fields": {
+      "map_height": 20,
+      "description": "",
+      "map_width": 20,
+      "tags": "table",
+      "pose_x": 6.390,
+      "pose_y": 24.731,
+      "image": "",
+      "pose_angle": 0.199,
+      "map_x": 344,
+      "map_y": 328,
+      "name": "Table"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "world.camera",
+    "fields": {
+      "url": "/streams/wide_stereo/right/image_rect_color",
+      "name": "head",
+      "features": "look"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "world.camera",
+    "fields": {
+      "url": "/streams/r_forearm_cam/image_color_rotated",
+      "name": "right arm",
+      "features": "look"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "world.camera",
+    "fields": {
+      "url": "/streams/l_forearm_cam/image_color_rotated",
+      "name": "left arm",
+      "features": "look"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "world.camera",
+    "fields": {
+      "url": "/streams/head_mount_kinect/rgb/image_color",
+      "name": "kinect",
+      "features": ""
+    }
+  },
+  {
+    "pk": 1,
+    "model": "world.robot",
+    "fields": {
+      "camera_base_url": "",
+      "description": "Remote telepresence robot near Xerox",
+      "tags": "",
+      "image": "static/images/IMG_20120914_134803.jpg",
+      "cameras": [],
+      "state": 0,
+      "service_url": "ws://ta108:11311/",
+      "public": null,
+      "name": "Texai TA108"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "world.robot",
+    "fields": {
+      "camera_base_url": "http://prq1.willowgarage.com:9999",
+      "description": "PR2 in Pool Room",
+      "tags": "",
+      "image": "static/images/IMG_20120914_134832.jpg",
+      "cameras": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "state": 0,
+      "service_url": "ws://prq1:11311/",
+      "public": null,
+      "name": "PR-Q"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "world.robot",
+    "fields": {
+      "camera_base_url": "http://prm1.willowgarage.com:9999",
+      "description": "PR2 for continuous ops",
+      "tags": "",
+      "image": "static/images/IMG_20120925_180649.jpg",
+      "cameras": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "state": 0,
+      "service_url": "ws://prm1:9099",
+      "public": null,
+      "name": "PR-M"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "world.robot",
+    "fields": {
+      "camera_base_url": "http://prn1.willowgarage.com:9999",
+      "description": "Robot tested with plug-in functionality",
+      "tags": "",
+      "image": "static/images/IMG_20120914_134917.jpg",
+      "cameras": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "state": 0,
+      "service_url": "ws://prn1.willowgarage.com:9099/",
+      "public": null,
+      "name": "PR-N"
+    }
+  },
+  {
+    "pk": 5,
+    "model": "world.robot",
+    "fields": {
+      "camera_base_url": "http://prl1.willowgarage.com:9999",
+      "description": "PR2 in Green Room",
+      "tags": "",
+      "image": "static/images/IMG_20120925_180649.jpg",
+      "cameras": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "state": 0,
+      "service_url": "ws://prl1.willowgarage.com:9099/",
+      "public": null,
+      "name": "PR-L"
+    }
+  },
+  {
+    "pk": 6,
+    "model": "world.robot",
+    "fields": {
+      "camera_base_url": "http://blh.willowgarage.com:9999",
+      "description": "Simulated PR-2 robot running on blh.willowgarage.com",
+      "tags": "",
+      "image": "static/images/screenshot1.png",
+      "cameras": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "state": 0,
+      "service_url": "ws://blh.willowgarage.com:9099/",
+      "public": true,
+      "name": "SimPR2 on BLH"
+    }
+  },
+  {
+    "pk": 7,
+    "model": "world.robot",
+    "fields": {
+      "camera_base_url": "http://localhost:9999",
+      "description": "Simulated PR-2 robot running on localhost",
+      "tags": "",
+      "image": "static/images/screenshot1.png",
+      "cameras": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "state": 0,
+      "service_url": "ws://localhost:9099/",
+      "public": true,
+      "name": "SimPR2 on localhost"
+    }
+  }
+]

@@ -1,0 +1,117 @@
+---
+
+- hosts: webservers
+  user: vagrant
+  sudo: True
+
+  tasks:
+    - name: update apt
+      action: command /usr/bin/apt-get update
+
+    #-------------
+    # Dev tools
+    #-------------
+
+    - name: install developer tools
+      action: apt pkg=$item state=present
+      with_items:
+        - vim
+        - tmux
+
+    #-------------
+    # Python tools
+    #-------------
+
+    - name: install python-software-properties
+      action: apt pkg=$item state=present
+      with_items:
+        - python-software-properties
+        - build-essential
+        - python-dev
+        - python-setuptools
+
+    - name: install pip
+      action: easy_install name=pip
+
+    - name: update easy_install packages
+      action: command /usr/bin/easy_install -U distribute
+
+    #-------------
+    # VCS
+    #-------------
+
+    - name: install mercurial
+      action: apt pkg=mercurial state=present
+
+    - name: install git
+      action: apt pkg=git state=present
+
+    #-------------
+    # Django
+    #-------------
+
+    - name: install libjpeg8
+      action: apt pkg=libjpeg8-dev state=present
+
+    - name: install system requirements for MySQL DB.
+      action: apt pkg=libmysqlclient-dev state=present
+
+    - name: install system requirements for gevent stack.
+      action: apt pkg=$item state=present
+      with_items:
+        - libevent-2.0-5
+        - libevent-dev
+
+    - name: installing the dateutil library for python.
+      action: apt pkg=python-dateutil state=present
+
+    - name: install django pip packages
+      action: pip name=$item state=present
+      with_items:
+        - django
+        - python-openid
+        - django-openid-auth
+        - pillow
+        - south
+        - git+https://github.com/abourget/gevent-socketio.git
+        - MySQL-python
+
+    - name: install specific version of django-rest-framework
+      action: pip name=djangorestframework version=2.1.11
+
+    #-------------
+    # ROS
+    #-------------
+
+#   Uncomment the lines below if you want to also install ROS in your VM
+#   Note that this is not necessary to run layer
+
+    # Tried adding key with command:
+    # wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
+    # But got an error. May be worth sending in a patch to Ansible's
+    # apt_repository module.
+#    - name: download ros repository key
+#      action: get_url url=http://packages.ros.org/ros.key dest=/tmp/ros.key
+#
+#    - name: install ros repository key
+#      action: command /usr/bin/apt-key add /tmp/ros.key
+#
+#    - name: add ros fuerte repository
+#      action: apt_repository repo='deb http://packages.ros.org/ros/ubuntu precise main' state=present
+#
+#    - name: install ros
+#      action: apt pkg=ros-fuerte-desktop-full state=present
+#
+#    - name: install third-party ros packages
+#      action: apt pkg=$item state=present
+#      with_items:
+#        - ros-fuerte-rosbridge-suite
+
+    #-------------
+    # Application
+    #-------------
+
+    # Set-up local configuration if none is set by copying provided default provided version
+    - name: set up local_settings.py for vagrant
+      action: command /bin/cp local_settings.vagrant.py local_settings.py chdir='~/binfrastructure/django/server' creates=/home/vagrant/binfrastructure/django/server/local_settings.py
+
