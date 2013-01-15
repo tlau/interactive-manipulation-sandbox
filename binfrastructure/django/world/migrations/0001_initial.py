@@ -8,125 +8,68 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'Place'
-        db.create_table('world_place', (
+        # Adding model 'Pose'
+        db.create_table('world_pose', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.TextField')()),
-            ('tags', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('image', self.gf('django.db.models.fields.files.ImageField')(max_length=100, null=True, blank=True)),
-            ('pose_x', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('pose_y', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('pose_angle', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('map_x', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('map_y', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('map_width', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('map_height', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
+            ('x', self.gf('django.db.models.fields.FloatField')(default=0)),
+            ('y', self.gf('django.db.models.fields.FloatField')(default=0)),
+            ('angle', self.gf('django.db.models.fields.FloatField')(default=0)),
         ))
-        db.send_create_signal('world', ['Place'])
+        db.send_create_signal('world', ['Pose'])
 
-        # Adding model 'Camera'
-        db.create_table('world_camera', (
+        # Adding model 'BinLocation'
+        db.create_table('world_binlocation', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=64)),
-            ('url', self.gf('django.db.models.fields.CharField')(max_length=512)),
-            ('features', self.gf('django.db.models.fields.CharField')(max_length=512, blank=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True)),
+            ('pickup_dropoff_pose', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['world.Pose'], unique=True)),
         ))
-        db.send_create_signal('world', ['Camera'])
+        db.send_create_signal('world', ['BinLocation'])
 
-        # Adding model 'Robot'
-        db.create_table('world_robot', (
+        # Adding model 'Bin'
+        db.create_table('world_bin', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.TextField')()),
-            ('tags', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('image', self.gf('django.db.models.fields.files.ImageField')(max_length=100, null=True, blank=True)),
-            ('public', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('state', self.gf('django.db.models.fields.IntegerField')()),
-            ('service_url', self.gf('django.db.models.fields.CharField')(max_length=512)),
-            ('camera_base_url', self.gf('django.db.models.fields.CharField')(max_length=128)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True)),
+            ('is_empty', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('location', self.gf('django.db.models.fields.related.ForeignKey')(related_name='bins', null=True, on_delete=models.SET_NULL, to=orm['world.BinLocation'])),
+            ('pose_last_seen', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['world.Pose'], null=True)),
+            ('time_last_seen', self.gf('django.db.models.fields.DateTimeField')(null=True)),
         ))
-        db.send_create_signal('world', ['Robot'])
-
-        # Adding M2M table for field cameras on 'Robot'
-        db.create_table('world_robot_cameras', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('robot', models.ForeignKey(orm['world.robot'], null=False)),
-            ('camera', models.ForeignKey(orm['world.camera'], null=False))
-        ))
-        db.create_unique('world_robot_cameras', ['robot_id', 'camera_id'])
-
-        # Adding model 'Client'
-        db.create_table('world_client', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('session_key', self.gf('django.db.models.fields.CharField')(max_length=40)),
-            ('username', self.gf('django.db.models.fields.CharField')(max_length=30)),
-            ('context', self.gf('django.db.models.fields.TextField')()),
-            ('last_seen', self.gf('django.db.models.fields.DateTimeField')()),
-        ))
-        db.send_create_signal('world', ['Client'])
+        db.send_create_signal('world', ['Bin'])
 
 
     def backwards(self, orm):
-        # Deleting model 'Place'
-        db.delete_table('world_place')
+        # Deleting model 'Pose'
+        db.delete_table('world_pose')
 
-        # Deleting model 'Camera'
-        db.delete_table('world_camera')
+        # Deleting model 'BinLocation'
+        db.delete_table('world_binlocation')
 
-        # Deleting model 'Robot'
-        db.delete_table('world_robot')
-
-        # Removing M2M table for field cameras on 'Robot'
-        db.delete_table('world_robot_cameras')
-
-        # Deleting model 'Client'
-        db.delete_table('world_client')
+        # Deleting model 'Bin'
+        db.delete_table('world_bin')
 
 
     models = {
-        'world.camera': {
-            'Meta': {'object_name': 'Camera'},
-            'features': ('django.db.models.fields.CharField', [], {'max_length': '512', 'blank': 'True'}),
+        'world.bin': {
+            'Meta': {'object_name': 'Bin'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
-            'url': ('django.db.models.fields.CharField', [], {'max_length': '512'})
+            'is_empty': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'location': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'bins'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': "orm['world.BinLocation']"}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
+            'pose_last_seen': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['world.Pose']", 'null': 'True'}),
+            'time_last_seen': ('django.db.models.fields.DateTimeField', [], {'null': 'True'})
         },
-        'world.client': {
-            'Meta': {'object_name': 'Client'},
-            'context': ('django.db.models.fields.TextField', [], {}),
+        'world.binlocation': {
+            'Meta': {'object_name': 'BinLocation'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'last_seen': ('django.db.models.fields.DateTimeField', [], {}),
-            'session_key': ('django.db.models.fields.CharField', [], {'max_length': '40'}),
-            'username': ('django.db.models.fields.CharField', [], {'max_length': '30'})
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
+            'pickup_dropoff_pose': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['world.Pose']", 'unique': 'True'})
         },
-        'world.place': {
-            'Meta': {'object_name': 'Place'},
-            'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+        'world.pose': {
+            'Meta': {'object_name': 'Pose'},
+            'angle': ('django.db.models.fields.FloatField', [], {'default': '0'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'image': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'map_height': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'map_width': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'map_x': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'map_y': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'name': ('django.db.models.fields.TextField', [], {}),
-            'pose_angle': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'pose_x': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'pose_y': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'tags': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'})
-        },
-        'world.robot': {
-            'Meta': {'object_name': 'Robot'},
-            'camera_base_url': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'cameras': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['world.Camera']", 'symmetrical': 'False'}),
-            'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'image': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'name': ('django.db.models.fields.TextField', [], {}),
-            'public': ('django.db.models.fields.NullBooleanField', [], {'null': 'True', 'blank': 'True'}),
-            'service_url': ('django.db.models.fields.CharField', [], {'max_length': '512'}),
-            'state': ('django.db.models.fields.IntegerField', [], {}),
-            'tags': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'})
+            'x': ('django.db.models.fields.FloatField', [], {'default': '0'}),
+            'y': ('django.db.models.fields.FloatField', [], {'default': '0'})
         }
     }
 
