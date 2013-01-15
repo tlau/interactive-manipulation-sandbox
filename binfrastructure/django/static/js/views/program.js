@@ -38,7 +38,7 @@ function(
 
       steps
           .attr('index', function(d, i) { return i; })
-          .text(function(d) { return d; })
+          .text(function(d) { return d.title; })
           .attr('id', function(d, i) { return 'step' + i; })
           .append('span')
             .attr('class', 'deletebutton nonselectable')
@@ -75,23 +75,33 @@ function(
     // Specific actions
 
     pickup : function(evt) {
-      this.addStep('Pick up from the kitchen');
+      this.addStep({
+        'title': 'Pick up from the kitchen',
+        });
     },
 
     dropoff: function(evt) {
-      this.addStep('Drop off at Elvio\'s office');
+      this.addStep({
+        'title': 'Drop off at Elvio\'s office',
+        });
     },
 
     speak: function(evt) {
-      this.addStep('Say "Hello!"');
+      this.addStep({
+        'title': 'Say "Hello!"',
+        });
     },
 
     wait: function(evt) {
-      this.addStep('Wait 30 seconds');
+      this.addStep({
+        'title': 'Wait 30 seconds',
+        });
     },
 
     recharge: function(evt) {
-      this.addStep('Recharge batteries');
+      this.addStep({
+        'title': 'Recharge batteries',
+        });
     }
 
   });
