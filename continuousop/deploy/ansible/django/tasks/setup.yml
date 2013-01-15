@@ -1,0 +1,63 @@
+---
+
+#-------------
+# Python tools
+#-------------
+
+- name: update apt
+  action: command /usr/bin/apt-get update
+
+- name: install python tools
+  action: apt pkg=$item state=present
+  with_items:
+    - python-software-properties
+    - build-essential
+    - python-dev
+    - python-setuptools
+
+- name: install pip
+  action: easy_install name=pip
+
+- name: update easy_install packages
+  action: command /usr/bin/easy_install -U distribute
+
+#-------------
+# VCS
+#-------------
+
+- name: install git
+  action: apt pkg=git state=present
+
+#-------------
+# Django
+#-------------
+
+- name: install libjpeg8
+  action: apt pkg=libjpeg8-dev state=present
+
+- name: install system requirements for MySQL DB.
+  action: apt pkg=libmysqlclient-dev state=present
+
+- name: install system requirements for gevent stack.
+  action: apt pkg=$item state=present
+  with_items:
+    - libevent-2.0-5
+    - libevent-dev
+
+- name: installing the dateutil library for python.
+  action: apt pkg=python-dateutil state=present
+
+- name: install django pip packages
+  action: pip name=$item state=present
+  with_items:
+    - django
+    - python-openid
+    - django-openid-auth
+    - pillow
+    - south
+    - git+https://github.com/abourget/gevent-socketio.git
+    - MySQL-python
+
+- name: install specific version of django-rest-framework
+  action: pip name=djangorestframework version=2.1.11
+

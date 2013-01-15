@@ -1,0 +1,11 @@
+---
+
+- name: update apt
+  action: command /usr/bin/apt-get update
+
+- name: install developer tools
+  action: apt pkg=$item state=present
+  with_items:
+    - vim
+    - tmux
+

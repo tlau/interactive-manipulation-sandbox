@@ -1,0 +1,23 @@
+#!/usr/bin/env python
+PACKAGE_NAME='multi_ros'
+import roslib; roslib.load_manifest(PACKAGE_NAME)
+import sys, os
+import json
+import rospy
+
+from multi_ros.multi_ros_node import MultiRosNode
+
+def run_child(child_ros_master_uri, child_config_uri, child_pub_uri, child_sub_uri):
+   child = MultiRosNode('multi_ros_child', '', child_ros_master_uri)
+   child.run_as_child(child_config_uri, child_pub_uri, child_sub_uri)
+   child.run()
+
+if __name__ == '__main__':
+   child_ros_master_uri = os.environ['ROS_MASTER_URI']
+
+   child_config_uri = 'tcp://*:5000'
+   child_pub_uri = 'tcp://*:5001'
+   child_sub_uri = 'tcp://*:5002'
+
+   # start the multi_ros child in a new process
+   run_child(child_ros_master_uri, child_config_uri, child_pub_uri, child_sub_uri)

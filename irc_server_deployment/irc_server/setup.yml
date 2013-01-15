@@ -1,0 +1,13 @@
+---
+
+- name: set up irc server
+  hosts: irc
+  user: vagrant
+  sudo: True
+
+  vars_files:
+    - vars/main.yml
+
+- include: ../ircd_hybrid/setup.yml
+- include: ../hubot/setup.yml
+

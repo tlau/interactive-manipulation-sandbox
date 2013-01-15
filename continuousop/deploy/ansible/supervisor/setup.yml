@@ -1,0 +1,13 @@
+---
+
+- name: set up supervisor
+  hosts: webservers
+  user: vagrant
+  sudo: True
+
+  tasks:
+    - include: tasks/setup.yml
+
+  handlers:
+    - include: handlers/main.yml
+

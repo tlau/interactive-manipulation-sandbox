@@ -1,0 +1,11 @@
+---
+
+- name: set up developer tools
+  hosts: webservers
+  user: vagrant
+  sudo: True
+
+  tasks:
+    - include: tasks/setup.yml
+
+

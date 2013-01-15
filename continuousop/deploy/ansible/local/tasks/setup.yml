@@ -1,0 +1,8 @@
+---
+
+- name: set up local_settings.py
+  action: template src=templates/local_settings.py dest=${webapps_dir}/${app_name}/django/server/local_settings.py
+
+- name: start app with supervisor
+  action: supervisorctl name=${app_name} state=started
+

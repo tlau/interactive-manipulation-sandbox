@@ -1,0 +1,42 @@
+---
+
+- name: update apt
+  action: command /usr/bin/apt-get update
+
+- name: install ircd-hybrid
+  action: apt pkg=ircd-hybrid state=present
+
+- name: configure irc server
+  action: template src=templates/ircd.conf dest=/etc/ircd-hybrid/ircd.conf
+
+- name: start irc server
+  action: service name=ircd-hybrid pattern=/usr/sbin/ircd-hybrid state=started
+
+# - name: install coffeescript
+#   action: command /usr/bin/npm install -g coffee-script
+
+# - name: create opt directory
+#   action: file path=${hubot_directory} state=directory
+
+# - name: create hubot installation config
+#   action: template src=templates/package.json dest=${hubot_directory}/package.json
+
+# - name: install hubot
+#   action: command /usr/bin/npm install chdir=${hubot_directory}
+
+# - name: copy over hubot scripts
+#   action: file path=${hubot_directory}/scripts src=${hubot_directory}/node_modules/hubot-scripts/src/scripts state=link
+
+# - name: configure scripts to use with hubot
+#   action: template src=templates/hubot-scripts.json dest=${hubot_directory}/hubot-scripts.json
+
+# - name: create supervisor config
+#   action: template src=templates/supervisor.ini dest=/etc/supervisor/hubot.ini
+
+# # This should be a notify under "create supervisor config", but wasn't working.
+# - name: restart supervisor
+#   action: service name=supervisord state=restarted
+
+# - name: start app with supervisor
+#   action: supervisorctl name=hubot state=started
+
