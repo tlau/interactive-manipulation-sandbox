@@ -14,31 +14,32 @@ function(
   App.ProgramView = Ember.View.extend({
     template: Ember.Handlebars.compile(programHtml),
 
-    program: new Array('step one', 'step two'),
+    program: new Array(),
 
     didInsertElement: function() {
       console.log("in didIE for Program");
 
-//      var controller = this.get('controller');
-//      console.log('setting observer on', controller);
-//      controller.addObserver('program', this, 'drawProgram');
+      // Doesn't work
+      // this.addObserver('program', this, 'drawProgram');
 
       this.drawProgram();
     },
 
     drawProgram: function() {
-
+      console.log('drawing program', this.program);
       var _this = this;
       var stepdiv = d3.select('.step_container');
       var steps = stepdiv.selectAll('.step')
         .data(this.program);
 
       steps.enter().append('div')
-          .attr('class', 'step nonselectable');
+          .attr('class', 'step nonselectable')
+          .on('click', function(d, i) { _this.selectStep(i); });
 
       steps
           .attr('index', function(d, i) { return i; })
           .text(function(d) { return d; })
+          .attr('id', function(d, i) { return 'step' + i; })
           .append('span')
             .attr('class', 'deletebutton nonselectable')
             .text('[X]')
@@ -47,18 +48,32 @@ function(
         steps.exit().remove();
     },
 
+    /* ---------------------------------------------------------------------- */
+    // Adding/deleting steps
+
     deleteStep: function(index) {
       this.program.splice(index, 1);
+      // manually redraw the program; I can't get Ember observers to work
       this.drawProgram();
     },
 
     addStep: function(newstep) {
       this.program.push(newstep);
+      console.log('new program:', this.program);
 
-      // manually redraw the program as a workaround; why dosen't the observer work?
+      // manually redraw the program; I can't get Ember observers to work
       this.drawProgram();
     },
+
+    // Change which step is currently selected
+    selectStep: function(index) {
+      $('.selected').removeClass('selected');
+      $('#step' + index).addClass('selected');
+    },
   
+    /* ---------------------------------------------------------------------- */
+    // Specific actions
+
     pickup : function(evt) {
       this.addStep('Pick up from the kitchen');
     },
