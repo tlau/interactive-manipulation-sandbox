@@ -363,6 +363,39 @@ a {
     background: gray;
 }
 
+/* The fat action buttons on the main screen */
+.action_button {
+    margin: 20px;
+    padding: 10px;
+
+    background: #65a9d7;
+    background: -webkit-gradient(linear, left top, left bottom, from(#3e779d), to(#65a9d7));
+    background: -webkit-linear-gradient(top, #3e779d, #65a9d7);
+    background: -moz-linear-gradient(top, #3e779d, #65a9d7);
+    background: -ms-linear-gradient(top, #3e779d, #65a9d7);
+    background: -o-linear-gradient(top, #3e779d, #65a9d7);
+
+    color: white;
+    border-radius: 15px;
+	width: 120px;
+	height: 120px;
+
+	float: left;
+
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.action_button.disabled {
+    background: gray;
+}
+
+/* The stop button in the brown robot info box */
 .stopbutton {
     margin: 10px;
     padding: 10px;
@@ -377,6 +410,17 @@ a {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.nonselectable {
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
 }
 
 /* ---------------------------------------------------------------------- */
@@ -421,24 +465,58 @@ a {
 }
 
 /* ---------------------------------------------------------------------- */
-
-/* For the arrow-key keypad in the Move screen */
-.joypad .mybutton {
-    margin: 10px;
-    padding: 5px;
+/* The program container on the left side */
+.program_container {
+	display: table-cell;
+	width: 30%;
 }
 
-/* ---------------------------------------------------------------------- */
-
-/* For the pickup tab */
-.recognized_object {
-    stroke: #00ff00;
-    stroke-width: 2;
-    stroke-dasharray: 10, 10;
-    fill: #00ff00;
-    fill-opacity: 0.0;
+.program {
+	background: green;
+	border: 1px solid gray;
+	border-radius: 15px;
+	height: 600px;
+	padding: 10px;
+	margin-right: 10px;
+	color: white;
 }
 
-.recognized_object.selected {
-    stroke-dasharray: 1, 0;
+/* The panel on the right side, normally containing actions */
+.actions_container {
+	display: table-cell;
+	width: 60%;
+	height: 600px;
+}
+
+.actions {
+	background: purple;
+	border: 1px solid gray;
+	border-radius: 15px;
+	padding: 10px;
+	height: 100%;
+}
+
+.step {
+	border-radius: 5px;
+	background: yellow;
+	border: 1px solid black;
+	width: 95%;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	padding: 5px;
+	cursor: pointer;
+	color: black;
+}
+
+.step.selected {
+	background: pink;
+}
+
+.deletebutton {
+	float: right;
+	background: lightgray;
+}
+
+.step_container {
+	margin-top: 10px;
 }
