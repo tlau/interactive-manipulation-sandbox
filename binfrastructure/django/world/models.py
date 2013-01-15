@@ -140,17 +140,16 @@ class BIFAction(models.Model):
         return _class(name=dict_action['name'],
                       params=json.dumps(dict_action['arguments']))
 
-    @classmethod
-    def to_dict(_class, instance):
+    def to_dict(self):
         """Produce a dict() representation of this instance."""
-        if instance.name not in [c[0] for c in API_call_choices]:
+        if self.name not in [c[0] for c in API_call_choices]:
             raise ValueError("bad API call name.")
 
-        arguments = json.loads(instance.params)
-        if instance.name == "go_to_pose":
+        arguments = json.loads(self.params)
+        if self.name == "go_to_pose":
             arguments = Pose(**arguments)
 
         return {
-            'name': instance.name,
+            'name': self.name,
             'arguments': arguments
         }
