@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import simplejson
 
 
 class Pose(models.Model):
@@ -71,13 +72,11 @@ implementation. The maximum length is exposed as MAX_LENGTH_PARAMS_STRING.
 
 PARAMS DESERIALIZATION:
 
-  "...id_list" kind of params string is expected to be ID values (what every
-  type) separated by single-space characters.
-  Examples: "1 2 3" "'hi hola bonasera' 'chau bye adio'" "[1,2,3]"
-  It's turned into a list of those ID values.
+  "...id_list" kind of params string is expected to be an array of ID values
+  (what every type they may be).
+  It's turned into a list of IDs.
 
-  "pose" kind of params string is expected to be three consecutive numeric
-  values separated by single-space characters. This are interpreted as "x", "y"
+  "pose" kind of params string is expected to be a object with the "x", "y"
   and "angle" values of a Pose instance.
   It's turned into a (non-saved) Pose instance.
 
@@ -86,6 +85,29 @@ PARAMS DESERIALIZATION:
 
   "seconds" kind of params string are expected to be a single numeric value.
   It's turned into a float.
+
+This deserialization allows for the client to serialize JSON objects and pass
+them on, which is the simplest possible thing. Examples:
+
+  var api_call = {
+    name: 'go_to_pose',
+    parameters: {x: 1.0, y: 2.0, angle: 3.14}
+    }
+
+  var api_call = {
+    name: 'pick_up_from_locations',
+    parameters: [1,2,3,4]
+    }
+
+  var api_call = {
+    name: 'speak',
+    parameters: 'something'
+    }
+
+  var api_call = {
+    name: 'wait',
+    parameters: 2.0
+    }
 """
 
 MAX_LENGTH_PARAMS_STRING = 200
@@ -108,31 +130,16 @@ class BIFAction(models.Model):
     name = models.CharField(max_length=50, choices=API_call_choices)
     params = models.CharField(max_length=MAX_LENGTH_PARAMS_STRING)
 
-    def argument(self):
-        """Translate the params string into arguments for the API call."""
+    def to_dict(self):
+        """Produce a dict() representation of this instance."""
         if self.name not in [c[0] for c in API_call_choices]:
             raise ValueError("bad API call name.")
 
-        if self.name in ['pick_up_bin',
-                         'pick_up_bin_from_location',
-                         'drop_of_bin_at_location']:
-            # string of single-space separated IDs.
-            return [ID for ID in self.params.split(' ')]
-        if self.name == 'go_to_pose':
-            # three values, single-space separated.
-            x, y, angle = self.params.split(' ')
-            return Pose(x=x, y=y, angle=angle)
-        if self.name == 'speak':
-            # a text string.
-            return self.params
-        if self.name == 'wait':
-            # a single numeric value.
-            seconds = float(self.params)
-            return seconds
+        arguments = simplejson.loads(self.params)
+        if self.name == "go_to_pose":
+            arguments = Pose(**arguments)
 
-    def translate(self):
-        """Produce a dict() representation of this instance."""
         return {
             'name': self.name,
-            'arguments': self.argument()
+            'arguments': arguments
         }
