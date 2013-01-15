@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils import simplejson
+import json
 
 
 class Pose(models.Model):
@@ -130,16 +130,27 @@ class BIFAction(models.Model):
     name = models.CharField(max_length=50, choices=API_call_choices)
     params = models.CharField(max_length=MAX_LENGTH_PARAMS_STRING)
 
-    def to_dict(self):
+    @classmethod
+    def from_dict(_class, dict_action):
+        """Produce an instance from a dict() representation."""
+        if not ('name' in dict_action and 'arguments' in dict_action):
+            raise ValueError('The dict() needs "name" and "arguments"')
+        if dict_action['name'] not in [c[0] for c in API_call_choices]:
+            raise ValueError('bad bif_action name.')
+        return _class(name=dict_action['name'],
+                      params=json.dumps(dict_action['arguments']))
+
+    @classmethod
+    def to_dict(_class, instance):
         """Produce a dict() representation of this instance."""
-        if self.name not in [c[0] for c in API_call_choices]:
+        if instance.name not in [c[0] for c in API_call_choices]:
             raise ValueError("bad API call name.")
 
-        arguments = simplejson.loads(self.params)
-        if self.name == "go_to_pose":
+        arguments = json.loads(instance.params)
+        if instance.name == "go_to_pose":
             arguments = Pose(**arguments)
 
         return {
-            'name': self.name,
+            'name': instance.name,
             'arguments': arguments
         }
