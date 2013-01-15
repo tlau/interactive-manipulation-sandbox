@@ -7,6 +7,9 @@ class Pose(models.Model):
     y = models.FloatField(default=0)
     angle = models.FloatField(default=0)
 
+    def __unicode__(self):
+        return u"x=%s y=%s angle=%s" % (self.x, self.y, self.angle)
+
 
 class BinLocation(models.Model):
     # Length of location name is currently an arbitraty value.
@@ -16,6 +19,9 @@ class BinLocation(models.Model):
     pickup_dropoff_pose = models.OneToOneField(Pose)
 
     # tags...
+
+    def __unicode__(self):
+        return self.name
 
     @property
     def number_of_bins(self):
@@ -38,3 +44,6 @@ class Bin(models.Model):
     time_last_seen = models.DateTimeField(null=True)
 
     # tags...
+
+    def __unicode__(self):
+        return self.name
