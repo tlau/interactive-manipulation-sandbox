@@ -13,16 +13,22 @@ else:
 
 import rosgraph
 import rosnode
+import actionlib
+import roslib; roslib.load_manifest("executer_actions")
+from executer_actions.msg import ExecuteAction, ExecuteGoal
 
 NODE_NAME = 'rosbif'
 NODE_ID = '/rosbif'
 
+TIMEOUT = 5     # Timeout, in seconds for actionlib operations
+
 _ros_ready = False
+__ac = None
 def _init_ros():
     # Make sure we do the initialization only once
     global _ros_ready
     if _ros_ready:
-        return True
+        return __ac
 
     # Do a safe, non-blocking test to see if we can communicate with the ROS master
     master = rosgraph.Master(NODE_ID)
@@ -32,14 +38,23 @@ def _init_ros():
         raise Exception("Unable to communicate with ROS master")
 
     # If everything looks OK, try importing rospy, etc.
-    import rospy
-    rospy.init_node( NODE_NAME)
+    import rospy; globals()['rospy'] = rospy
+    rospy.init_node( NODE_NAME, anonymous=True)
     _ros_ready = True
+
+    # Create an actionlib client and connect to server
+    global __ac
+    __ac = actionlib.SimpleActionClient('/executer/execute', ExecuteAction)
+    rc = __ac.wait_for_server(timeout=rospy.Duration( TIMEOUT))
+    if not rc:
+        raise Exception("Timeout trying to connect to SMACH Executer server")
+    print "Successfully initiated ROS and actionlib client"
+    return __ac
 
 class Robot:
     def __init__(self):
         '''Perform ROS initializetion'''
-        _init_ros()
+        self._ac = _init_ros()
 
     def navigate_to_pose(self, x, y):
         '''Navigates the robot to a given position in the map'''
@@ -50,9 +65,31 @@ class Robot:
         '''
         return rosnode.rosnode_ping('/rosout',max_count=1)
 
+    def ac_ping(self):
+        '''
+        Test a higher level connection by executing a dummy action
+        '''
+        goal = ExecuteGoal()
+        goal.action = '''
+{
+    "type": "action"
+  , "name": "Dummy"
+  , "inputs": {}
+}
+'''
+        self._ac.send_goal(goal)
+        finished = self._ac.wait_for_result(rospy.Duration(TIMEOUT))
+        if not finished:
+            raise Exception("Timeout waiting for actionlib Dummy action")
+
+        result = self._ac.get_result()
+        return result
+
+
 if __name__ == '__main__':
     r = Robot()
     if r.ping():
-        print "Success!"
+        print "Ping 1: Success!"
     else:
-        print "Failure"
+        print "Ping 1: Failure"
+    print "Ping 2: %s" % r.ac_ping()
