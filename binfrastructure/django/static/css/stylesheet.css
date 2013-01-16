@@ -479,6 +479,8 @@ a {
 	padding: 10px;
 	margin-right: 10px;
 	color: white;
+	/* To place a button at the bottom */
+	position: relative;
 }
 
 /* The panel on the right side, normally containing actions */

@@ -26,7 +26,6 @@ function(
     },
 
     drawProgram: function() {
-      console.log('drawing program', this.program);
       var _this = this;
       var stepdiv = d3.select('.step_container');
       var steps = stepdiv.selectAll('.step')
@@ -59,7 +58,6 @@ function(
 
     addStep: function(newstep) {
       this.program.push(newstep);
-      console.log('new program:', this.program);
 
       // manually redraw the program; I can't get Ember observers to work
       this.drawProgram();
@@ -75,14 +73,20 @@ function(
     // Specific actions
 
     pickup : function(evt) {
+      var locations = new Array("Elvio's office", "Julian's office", "the kitchen",
+        "the Green Room", "the stockroom", "Esmi's office", "Kaijen's office", "the White Lab");
+      var loc = locations[Math.floor(Math.random() * locations.length)];
       this.addStep({
-        'title': 'Pick up from the kitchen',
+        'title': 'Pick up from ' + loc,
         });
     },
 
     dropoff: function(evt) {
+      var locations = new Array("Elvio's office", "Julian's office", "the kitchen",
+        "the Green Room", "the stockroom", "Esmi's office", "Kaijen's office", "the White Lab");
+      var loc = locations[Math.floor(Math.random() * locations.length)];
       this.addStep({
-        'title': 'Drop off at Elvio\'s office',
+        'title': 'Drop off at ' + loc,
         });
     },
 
@@ -93,8 +97,9 @@ function(
     },
 
     wait: function(evt) {
+      var num = (Math.floor(Math.random() * 29) + 1) * 10;
       this.addStep({
-        'title': 'Wait 30 seconds',
+        'title': 'Wait ' + num + ' seconds',
         });
     },
 
@@ -102,6 +107,13 @@ function(
       this.addStep({
         'title': 'Recharge batteries',
         });
+    },
+
+    /* ---------------------------------------------------------------------- */
+    // Program execution
+    runProgram: function(evt) {
+      console.log("Run program pressed");
+      alert("Not implemented yet!");
     }
 
   });
