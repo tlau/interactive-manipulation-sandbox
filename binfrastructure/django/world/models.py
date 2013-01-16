@@ -63,7 +63,7 @@ like "3.0 -2.2 1.5". It should correspond to a call to
 
    go_to_pose(Pose(x=3.0, y=-2.2, angle=1.5))
 
-The arguments() method of a BIFAction produces a dict instance with keys "name"
+The to_dict() method of a BIFAction produces a dict instance with keys "name"
 and "arguments". The "name" is the API function to invoke; the "arguments" is a
 python object, ready to be passed to that function.
 
@@ -126,13 +126,30 @@ API_call_choices = (
 
 
 class BIFAction(models.Model):
+    """
+    A BIF Action instance with parameters bound, corresponding to an API call.
+    """
 
+    # API function to be called.
     name = models.CharField(max_length=50, choices=API_call_choices)
+
+    # Bound parameters, codified as a stringified JSON.
     params = models.CharField(max_length=MAX_LENGTH_PARAMS_STRING)
+
+    # The program this instruction corresponds to. NULL means this instruction
+    # is itself a single-instruction program.
+    program = models.ForeignKey('BIFProgram', blank=True, null=True,
+                                related_name='instructions')
+
+    # The instruction index (one-based) of this action in its program.
+    instruction_number = models.PositiveIntegerField(default=1)
 
     @classmethod
     def from_dict(_class, dict_action):
-        """Produce an instance from a dict() representation."""
+        """Produce an instance from a dict() representation.
+
+        Raises ValueError if data is not good.
+        """
         if not ('name' in dict_action and 'arguments' in dict_action):
             raise ValueError('The dict() needs "name" and "arguments"')
         if dict_action['name'] not in [c[0] for c in API_call_choices]:
@@ -141,7 +158,11 @@ class BIFAction(models.Model):
                       params=json.dumps(dict_action['arguments']))
 
     def to_dict(self):
-        """Produce a dict() representation of this instance."""
+        """Produce a dict() representation of this instance.
+
+        Raises ValueError if data was not good (which would be very seriuos
+        'cause the data could have come from the database).
+        """
         if self.name not in [c[0] for c in API_call_choices]:
             raise ValueError("bad API call name.")
 
@@ -153,3 +174,16 @@ class BIFAction(models.Model):
             'name': self.name,
             'arguments': arguments
         }
+
+
+class BIFProgram(models.Model):
+    """
+    BIF program, considered a sequence of BIF Actions.
+    """
+    name = models.CharField(max_length=200)
+
+    @property
+    def instruction_sequence(self):
+        """Return a QuerySet with the BIFAction instances which compose this
+        program, ordered as they should be executed."""
+        return self.instructions.order_by('instruction_number')
