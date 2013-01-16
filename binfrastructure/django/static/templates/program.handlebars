@@ -16,15 +16,41 @@
 
 <div class="actions_container">
 
-  <div class="actions">
+  <div id="actions">
 
     <div style="color: white;">Robot actions</div>
 
     <div class="action_button" {{action pickup target="view"}}> Pick up bin </div>
     <div class="action_button" {{action dropoff target="view"}}> Drop off bin </div>
+    <div class="action_button" {{action gotoPlace target="view"}}> Go to place </div>
     <div class="action_button" {{action speak target="view"}}> Speak aloud </div>
     <div class="action_button" {{action wait target="view"}}> Wait </div>
     <div class="action_button" {{action recharge target="view"}}> Recharge </div>
 
   </div>
+
+  <div id="pickup" class="hidden" style="position: relative;">
+    Pickup a bin...
+
+    <div style="position: absolute; bottom: 0px; right: 0px;">
+      <div class="mybutton" {{action doneEditingStep target="view"}}> Done </div>
+    </div>
+  </div>
+
+  <div id="dropoff" class="hidden" style="position: relative;">
+    Drop off a bin...
+
+    <div style="position: absolute; bottom: 0px; right: 0px;">
+      <div class="mybutton" {{action doneEditingStep target="view"}}> Done </div>
+    </div>
+  </div>
+
+  <div id="goto" class="hidden" style="position: relative;">
+    Go to a place...
+
+    <div style="position: absolute; bottom: 0px; right: 0px;">
+      <div class="mybutton" {{action doneEditingStep target="view"}}> Done </div>
+    </div>
+  </div>
 </div>
+

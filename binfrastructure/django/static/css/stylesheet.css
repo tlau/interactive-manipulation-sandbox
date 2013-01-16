@@ -490,7 +490,7 @@ a {
 	height: 600px;
 }
 
-.actions {
+#actions {
 	background: purple;
 	border: 1px solid gray;
 	border-radius: 15px;
@@ -521,4 +521,33 @@ a {
 
 .step_container {
 	margin-top: 10px;
+}
+
+.hidden {
+	/* Don't display by default */
+	display: none;
+}
+
+#pickup {
+    background: #65a9d7;
+	border: 1px solid gray;
+	border-radius: 15px;
+	padding: 10px;
+	height: 100%;
+}
+
+#dropoff {
+    background: #65a9d7;
+	border: 1px solid gray;
+	border-radius: 15px;
+	padding: 10px;
+	height: 100%;
+}
+
+#goto {
+    background: #65a9d7;
+	border: 1px solid gray;
+	border-radius: 15px;
+	padding: 10px;
+	height: 100%;
 }
