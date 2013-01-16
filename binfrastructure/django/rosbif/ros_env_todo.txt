@@ -1,0 +1,2 @@
+* get and rosmake executer_actions
+* source setup.bash making sure to add the location of executer_actions to the ROS_PACKAGE_PATH
