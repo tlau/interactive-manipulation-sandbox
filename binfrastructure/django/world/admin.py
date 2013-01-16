@@ -1,15 +1,10 @@
 from django.contrib import admin
-from world.models import Place, Robot, Camera
+import world.models
 
-class RobotAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description')
 
-class PlaceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description', 'pose_x', 'pose_y', 'map_x', 'map_y')
+class BinAdmin(admin.ModelAdmin):
+    exclude = ['pose_last_seen', 'time_last_seen']
 
-class CameraAdmin(admin.ModelAdmin):
-    list_display = ('name', 'url')
-
-admin.site.register(Place, PlaceAdmin)
-admin.site.register(Robot, RobotAdmin)
-admin.site.register(Camera, CameraAdmin)
+admin.site.register(world.models.Pose)
+admin.site.register(world.models.BinLocation)
+admin.site.register(world.models.Bin, BinAdmin)
