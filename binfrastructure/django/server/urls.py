@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.conf import settings
+from django.views.generic.simple import redirect_to
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -15,8 +16,8 @@ urlpatterns = patterns('',
         {'template_name': 'index.html', 'next_page': '/'}),
 
     # Main entry point (to be moved to Apache)
-    url('^$', 'django.views.generic.simple.direct_to_template',
-        {'template': 'index.html'}),
+    url('^$', redirect_to,
+        {'url': '/static/index.html'}),
 
     # Database of objects for our prototype application
     url(r'^world/', include('world.urls')),
