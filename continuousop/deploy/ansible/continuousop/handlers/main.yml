@@ -1,0 +1,5 @@
+---
+
+- name: restart app with supervisor
+  action: supervisorctl name=${app_name} state=restarted
+

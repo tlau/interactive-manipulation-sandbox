@@ -1,0 +1,16 @@
+---
+
+- include: ../nodejs/setup.yml
+- include: ../supervisor/setup.yml
+
+- name: set up hubot
+  hosts: irc
+  user: vagrant
+  sudo: True
+
+  tasks:
+    - include: tasks/setup.yml
+
+  handlers:
+    - include: ../supervisor/handlers/main.yml
+

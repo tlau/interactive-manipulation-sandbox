@@ -1,0 +1,19 @@
+---
+
+- include: ../continuousop/setup.yml
+
+- name: set up a local instance of continuousop
+  hosts: webservers
+  user: vagrant
+  sudo: True
+
+  vars_files:
+    - ../continuousop/vars/main.yml
+    - vars/main.yml
+
+  tasks:
+    - include: tasks/setup.yml
+
+  handlers:
+    - include: ../continuousop/handlers/main.yml
+

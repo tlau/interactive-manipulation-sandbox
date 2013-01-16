@@ -1,0 +1,7 @@
+---
+
+- name: create supervisor program config
+  action: template src=templates/supervisor_${app_name}.ini dest=/etc/supervisor/${app_name}.ini
+  notify:
+  - restart supervisor
+

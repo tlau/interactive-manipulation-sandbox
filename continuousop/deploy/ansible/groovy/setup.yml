@@ -1,0 +1,11 @@
+---
+
+- name: set up ros groovy
+  hosts: robots
+  user: vagrant
+  sudo: True
+
+  tasks:
+    - include: tasks/setup.yml
+
+

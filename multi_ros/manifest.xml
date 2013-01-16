@@ -1,0 +1,16 @@
+<package>
+  <description brief="multi_ros">
+    multi_ros
+  </description>
+  <author>Jonathan Binney</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/mros</url>
+
+  <depend package="rospy"/>
+  <depend package="rosgraph"/>
+  <depend package="rostopic"/>
+
+</package>
+
+

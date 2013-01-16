@@ -1,0 +1,19 @@
+---
+
+irc_channel_name: \#im
+
+irc_server_name: babylon1.willowgarage.com
+irc_server_port: 6667
+irc_server_description: robot talk
+irc_server_max_clients: 512
+irc_server_network_name: willow garage intranet
+irc_server_network_description: i am a network short and stout
+irc_server_admin_name: Tessa Lau
+irc_server_admin_description: Main Server Administrator
+irc_server_admin_email: <tlau@willowgarage.com>
+irc_server_operator_password: pOxP23BsEKEzI
+
+hubot_directory: /opt/hubot
+hubot_name: hubot
+hubot_scripts: ["redis-brain.coffee", "tweet.coffee", "shipit.coffee", "git-help", "github-pulls", "hackernews", "hangman", "haters", "history", "iced-coffee-weather", "javascript-sandbox", "jenkins", "kittens", "remind", "robot-memes", "tell", "which-do-you-prefer", "whos-turn", "yoda-quotes", "wunderground", "xkcd"]
+

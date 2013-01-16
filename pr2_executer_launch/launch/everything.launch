@@ -2,8 +2,9 @@
   <arg name="throttle_cameras" default="true" />
   <arg name="sim" default="false" />
   <arg name="im" default="true" />
-  <arg name="kinect_start" default="false" />
+  <arg name="launch_kinect" default="true" />
   <arg name="kinect_frame_prefix" default="/head_kinect" />
+  <arg name="multi_ros" default="true" />
 
   <arg name="http_streamer" default="true" />
   <arg name="web_pointcloud_streaming" default="true" />
@@ -11,6 +12,7 @@
   <include file="$(find pr2_executer_launch)/launch/executer.launch">
     <arg name="sim" value="$(arg sim)" />
     <arg name="im" value="$(arg im)" />
+    <arg name="launch_kinect" value="$(arg launch_kinect)" />
   </include>
 
   <!-- rosbridge and mjpeg_server -->
@@ -18,16 +20,6 @@
     <param name="port" value="9099"/>
   </node>
   <include file="$(find mjpeg_server)/launch/mjpeg_server.launch" />
-
-  <group if="$(arg kinect_start)">
-    <include file="$(find openni_launch)/launch/openni.launch">
-      <arg name="depth_registration" value="true"/>
-      <arg name="camera" value="head_mount_kinect"/>
-      <arg name="rgb_frame_id" value="$(arg kinect_frame_prefix)_rgb_optical_frame"/>
-      <arg name="depth_frame_id" value="$(arg kinect_frame_prefix)_depth_optical_frame"/>
-      <arg name="publish_tf" value="false"/>
-    </include>
-  </group>
 
   <group if="$(arg http_streamer)">
     <!-- http image topic video streamer -->
@@ -99,6 +91,10 @@
 
   <node name="throttle_plan" pkg="topic_tools" type="throttle"
     args="messages /move_base_node/NavfnROS/plan 0.20 /plan_throttled">
+  </node>
+
+  <!-- start multi_ros server -->
+  <node if="$(arg multi_ros)" name="multi_ros_child" pkg="multi_ros" type="child">
   </node>
 
 </launch>

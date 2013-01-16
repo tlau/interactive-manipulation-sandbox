@@ -1,0 +1,6 @@
+---
+
+http_port: 8000
+server_name: localhost
+local_settings_file: local_settings.vagrant.py
+

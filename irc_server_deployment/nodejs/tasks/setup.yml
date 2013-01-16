@@ -1,0 +1,17 @@
+---
+
+- name: update apt
+  action: command /usr/bin/apt-get update
+
+- name: install python-software-properties
+  action: apt pkg=python-software-properties state=present
+
+- name: add node.js ppa
+  action: apt_repository repo=ppa:chris-lea/node.js state=present
+
+- name: install node.js and npm
+  action: apt pkg=$item state=present
+  with_items:
+   - nodejs
+   - npm
+
