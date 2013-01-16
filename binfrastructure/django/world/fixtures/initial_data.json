@@ -1,0 +1,20 @@
+[
+  {
+    "pk": 1,
+    "model": "auth.user",
+    "fields": {
+      "username": "layerman",
+      "first_name": "Layer",
+      "last_name": "Manager",
+      "is_active": true,
+      "is_superuser": true,
+      "is_staff": true,
+      "last_login": "2012-10-31T00:59:30.640Z",
+      "groups": [],
+      "user_permissions": [],
+      "password": "pbkdf2_sha256$10000$5TgEIXuVe8D9$tAu7tiwFqjbIYHRWbXq4E4AiCLjvfX8KIhYPzno3ItE=",
+      "email": "layerman@willowgarage.com",
+      "date_joined": "2012-10-30T21:02:30.036Z"
+    }
+  }
+]
