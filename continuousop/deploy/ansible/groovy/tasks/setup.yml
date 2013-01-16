@@ -1,0 +1,23 @@
+---
+
+- name: update apt
+  action: command /usr/bin/apt-get update
+
+- name: install python-software-properties
+  action: apt pkg=python-software-properties state=present
+
+- name: download ros repository key
+  action: get_url url=http://packages.ros.org/ros.key dest=/tmp/ros.key
+
+- name: install ros repository key
+  action: command /usr/bin/apt-key add /tmp/ros.key
+
+- name: add ros precise repository
+  action: apt_repository repo='deb http://packages.ros.org/ros/ubuntu precise main' state=present
+
+- name: update apt
+  action: command /usr/bin/apt-get update
+
+- name: install ros
+  action: apt pkg=ros-groovy-ros-base state=present
+

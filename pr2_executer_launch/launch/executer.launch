@@ -1,6 +1,7 @@
 <launch>
     <arg name="sim" default="false" />
     <arg name="im" default="false" />
+    <arg name="launch_kinect" default="false" />
 
     <!-- executer server -->
     <node pkg="smach_executer" type="executer" name="executer"/>
@@ -15,6 +16,7 @@
 
     <group if="$(arg im)">
          <include file="$(find pr2_interactive_manipulation)/launch/pr2_interactive_manipulation_robot.launch">
+              <arg name="launch_kinect" value="$(arg launch_kinect)" />
               <arg name="sim" value="$(arg sim)" />
               <arg name="throttle_cameras" value="false" />
               <arg name="nav" value="true" />

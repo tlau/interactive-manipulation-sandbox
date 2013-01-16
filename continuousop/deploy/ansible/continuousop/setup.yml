@@ -1,0 +1,24 @@
+---
+
+# The playbooks must run before the continuousop tasks as they depend on
+# certain directories being set up (like supervisor).
+- include: ../developer_tools/setup.yml
+- include: ../mysql/setup.yml
+- include: ../django/setup.yml
+- include: ../supervisor/setup.yml
+
+- name: set up the continuousop app
+  hosts: webservers
+  user: vagrant
+  sudo: True
+
+  vars_files:
+    - vars/main.yml
+
+  tasks:
+    - include: tasks/setup.yml
+
+  handlers:
+    - include: ../supervisor/handlers/main.yml
+    - include: handlers/main.yml
+

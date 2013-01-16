@@ -1,0 +1,19 @@
+require 'vagrant-ansible'
+
+Vagrant::Config.run do |config|
+  config.vm.box     = "precise64"
+  config.vm.box_url = "http://files.vagrantup.com/precise64.box"
+
+  # Forward guest port to host port
+  config.vm.forward_port 6667, 6667
+
+  config.vm.provision :ansible do |ansible|
+    # Point Vagrant at the location of your playbook you want to run
+    ansible.playbook = "irc_server/setup.yml"
+
+    # The Vagrant VM will be put in this host group change this should
+    # match the host group in your playbook you want to test
+    ansible.hosts = "irc"
+  end
+end
+

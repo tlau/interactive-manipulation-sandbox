@@ -12,3 +12,4 @@ continuousop/django/world.*.json
 parser.out
 parsetab.py
 node_modules
+log

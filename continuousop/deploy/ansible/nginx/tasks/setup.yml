@@ -1,0 +1,17 @@
+---
+
+- name: update apt
+  action: command /usr/bin/apt-get update
+
+- name: add nginx ppa
+  action: apt_repository repo=ppa:nginx/stable state=present
+
+- name: install nginx
+  action: apt pkg=nginx state=present
+
+- name: remove default nginx site
+  action: file path=/etc/nginx/sites-enabled/default state=absent
+
+- name: write nginx.conf
+  action: template src=templates/nginx.conf dest=/etc/nginx/nginx.conf
+

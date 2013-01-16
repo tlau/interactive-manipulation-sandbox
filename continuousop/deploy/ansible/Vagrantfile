@@ -14,11 +14,11 @@ Vagrant::Config.run do |config|
   config.vm.customize ["modifyvm", :id, "--name", "continuousop"]
 
   # Share the host folder (3rd argument) with the guest (2nd argument)
-  config.vm.share_folder "continuousop", "~/continuousop", "../../../continuousop"
+  config.vm.share_folder "continuousop", "/opt/continuousop", "../../../continuousop"
 
   config.vm.provision :ansible do |ansible|
     # Point Vagrant at the location of your playbook you want to run
-    ansible.playbook = "webserver.yml"
+    ansible.playbook = "local/setup.yml"
 
     # The Vagrant VM will be put in this host group change this should
     # match the host group in your playbook you want to test

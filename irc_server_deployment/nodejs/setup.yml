@@ -1,0 +1,10 @@
+---
+
+- name: set up node.js
+  hosts: irc
+  user: vagrant
+  sudo: True
+
+  tasks:
+    - include: tasks/setup.yml
+

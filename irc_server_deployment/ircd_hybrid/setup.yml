@@ -1,0 +1,10 @@
+---
+
+- name: set up ircd-hybrid
+  hosts: irc
+  user: vagrant
+  sudo: True
+
+  tasks:
+    - include: tasks/setup.yml
+
