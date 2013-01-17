@@ -180,7 +180,7 @@ function(
       if (step) {
         step.setParam('location', this.get('selected_location'));
       } else {
-        console.log("Error: setting parameter of unknown step!");
+        console.log("Error: setting parameter location of unknown step!");
       }
 
       // Refresh the program
@@ -223,7 +223,6 @@ function(
     },
 
     drawSelectedPointOnMap: function() {
-      console.log("drawing selected point on map");
       if (this.get('map_xy') === null) return;
 
       var _this = this;
@@ -255,7 +254,7 @@ function(
         if (step) {
           step.setParam('text', this.get('text_to_speak'));
         } else {
-          console.log("Error: setting parameter of unknown step!");
+          console.log("Error: setting parameter text of unknown step!");
         }
       }
 
@@ -279,7 +278,7 @@ function(
         if (step) {
           step.setParam('duration', this.get('selected_time'));
         } else {
-          console.log("Error: setting parameter of unknown step!");
+          console.log("Error: setting parameter time of unknown step!");
         }
       }
 
@@ -288,12 +287,12 @@ function(
     }.observes('selected_time'),
 
     onTimePeriodChange: function(evt) {
-      if (this.get('selected_time_period')) {
+      if (this.get('selected_time_period') && this.get('selected_step')) {
         var step = this.get('program')[this.get('selected_step')];
         if (step) {
           step.setParam('time_period', this.get('selected_time_period'));
         } else {
-          console.log("Error: setting parameter of unknown step!");
+          console.log("Error: setting parameter period of unknown step!");
         }
       }
 
@@ -314,7 +313,7 @@ function(
       var ret = JSON.stringify(this.get('program').map(function (d) { return d.toAPI(); }));
       // Send ret to the middleware layer here
       console.log(ret);
-      alert("Sorry, not implemented yet!");
+      alert("Not implemented yet -- we're working on it!");
     },
 
     saveProgram: function(evt) {
