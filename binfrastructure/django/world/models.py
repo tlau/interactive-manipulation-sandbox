@@ -20,7 +20,7 @@ class BinLocation(models.Model):
     name = models.CharField(max_length=200, blank=True)
 
     # Where / how bins can be picked up or droped off.
-    pickup_dropoff_pose = models.OneToOneField(Pose)
+    pose = models.OneToOneField(Pose)
 
     # tags...
 
@@ -111,13 +111,13 @@ class BIFAction(models.Model):
     # Bound parameters, codified as a stringified JSON.
     params = models.CharField(max_length=MAX_LENGTH_PARAMS_STRING)
 
-    # The program this instruction corresponds to. NULL means this instruction
-    # is itself a single-instruction program.
+    # The program this step corresponds to. NULL means this step
+    # is itself a single-step program.
     program = models.ForeignKey('BIFProgram', blank=True, null=True,
-                                related_name='instructions')
+                                related_name='steps')
 
-    # The instruction index (one-based) of this action in its program.
-    instruction_number = models.PositiveIntegerField(default=1)
+    # The step index (one-based) of this action in its program.
+    step_number = models.PositiveIntegerField(default=1)
 
     @classmethod
     def from_dict(_class, dict_action):
@@ -156,15 +156,15 @@ class BIFProgram(models.Model):
     name = models.CharField(max_length=200)
 
     @property
-    def instruction_sequence(self):
+    def step_sequence(self):
         """Return a QuerySet with the BIFAction instances which compose this
         program, ordered as they should be executed."""
-        return self.instructions.order_by('instruction_number')
+        return self.steps.order_by('step_number')
 
-    def replace_instruction_sequence(self, instruction_sequence):
-        """Allow to replace the instruction sequence of this program.
+    def replace_step_sequence(self, step_sequence):
+        """Allow to replace the step sequence of this program.
 
-        Each element in the "instruction_sequence" sequence is a BIFAction
+        Each element in the "step_sequence" sequence is a BIFAction
         instance, which will be commited to the database if it has not yet been
         save()'d.
 
@@ -172,10 +172,10 @@ class BIFProgram(models.Model):
         this program. If these BIFActions correspond to a different program,
         said program would end up empty.
         """
-        # Delete current instructions.
-        for instruction in self.instruction_sequence:
-            instruction.delete()
-        # Add the new instructions.
-        for instruction in instruction_sequence:
-            instruction.program = self
-            instruction.save()
+        # Delete current steps.
+        for step in self.step_sequence:
+            step.delete()
+        # Add the new steps.
+        for step in step_sequence:
+            step.program = self
+            step.save()
