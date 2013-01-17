@@ -37,6 +37,7 @@ class ProgramSerializer(serializers.ModelSerializer):
 
 
 urlpatterns = patterns('',
+
     url(r'^binlocations$', generics.ListAPIView.as_view(
         model=BinLocation,
         serializer_class=BinLocationSerializer)),
@@ -46,4 +47,7 @@ urlpatterns = patterns('',
 
     url(r'^programs$', world.views.programs),
     url(r'^programs/(?P<pk>[^/]+)$', world.views.single_program),
+
+    url(r'^run/program$', world.views.run_program),
+    url(r'^run/step$', world.views.run_step),
 )

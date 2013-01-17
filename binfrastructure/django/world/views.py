@@ -1,6 +1,5 @@
-import logging
-
 from django.shortcuts import render_to_response
+
 from rest_framework import status
 from rest_framework.decorators import parser_classes, api_view
 from rest_framework.parsers import JSONParser
@@ -9,6 +8,11 @@ from rest_framework.response import Response
 from world.models import BIFAction, BIFProgram
 from serializers import ProgramSerializer
 
+import logging
+from world.robot import robot_proxy as robot
+from world.models import API_call_choices
+
+API_names = [c[0] for c in API_call_choices]
 logger = logging.getLogger('dev')
 
 
@@ -112,3 +116,101 @@ def programs(request, format=None):
 
 
 # interpreter endpoint.
+
+# The strategy to run client sent code on the robot is the following:
+# 1. turn the client code into a python data type.
+# 2. apply appropriate data transforms to the results to get a "data program".
+# 3. verify it is a valid data program:
+#   * program has steps,
+#   * for each step
+#     * action name is a correct API call.
+#     * params are correct for for that action.
+# 4. Verify the robot is available to execute program.
+# 5. Make the action function call.
+#   * expect exceptions.
+#   * recover robot from inconsistent state.
+#   * return error data to the user.
+# 6. Bring the robot to a state capable of receiving the next program.
+# 7. Release any resources used.
+# 8. Pop the champagne.
+
+@api_view(['POST'])
+def run_program(request):
+    """Run the program POSTed, without saving it."""
+
+    # Trust that the POSTed program is valid.
+
+    program = request.DATA
+    logger.info("Excuting program %s." % program['name'])
+
+    for step in program['steps']:
+        fn_name = step['action']
+        if fn_name not in API_names:
+            msg = ('Bad API call (%s) from program %s.'
+                   % (fn_name, program['name']))
+            logger.debug(msg)
+            return Response({'detail': msg},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        robot_api_call = getattr(robot, fn_name)
+        params = step['params']
+        try:
+
+            # ...Blocking call...
+            robot_api_call(params)
+
+        except (TypeError, ValueError):
+            msg = ('API call %s, bad parameters: %s'
+                   % (fn_name, params))
+            logger.debug(msg)
+            return Response({'detail': msg},
+                            status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            msg = ('API call %s, exception: %s'
+                   % (fn_name, e))
+            logger.debug(msg)
+            return Response({'detail': msg},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        finally:
+            # Run clean up on the robot.
+            pass
+    return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def run_step(request):
+    """Run the step POSTed alone, without saving it."""
+
+    # Trust that the POSTed step is valid.
+    step = request.DATA
+
+    fn_name = step['action']
+    if fn_name not in API_names:
+        msg = ('Bad API call (%s).' % fn_name)
+        logger.debug(msg)
+        return Response({'detail': msg},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    robot_api_call = getattr(robot, fn_name)
+    params = step['params']
+    try:
+
+        # ... Blocking call...
+        robot_api_call(params)
+
+    except (TypeError, ValueError):
+        msg = ('API call %s, bad parameters: %s'
+               % (fn_name, params))
+        logger.debug(msg)
+        return Response({'detail': msg},
+                        status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        msg = ('API call %s, exception: %s'
+               % (fn_name, e))
+        logger.debug(msg)
+        return Response({'detail': msg},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    finally:
+        # Run clean up on the robot.
+        pass
+    return Response(status=status.HTTP_200_OK)
