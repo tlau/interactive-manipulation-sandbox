@@ -80,32 +80,43 @@
       action: pip name=djangorestframework version=2.1.11
 
     #-------------
-    # ROS
+    # ROS actionlib client
     #-------------
-
-#   Uncomment the lines below if you want to also install ROS in your VM
-#   Note that this is not necessary to run layer
 
     # Tried adding key with command:
     # wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
     # But got an error. May be worth sending in a patch to Ansible's
     # apt_repository module.
+#   NOTE: (JAC) I'm providing the ros key from sources instead of downloading from packages.ros.org
+#   because of a temporary yet-to-be-configured conflict with the apt-cacher in the Creativa office
 #    - name: download ros repository key
 #      action: get_url url=http://packages.ros.org/ros.key dest=/tmp/ros.key
-#
-#    - name: install ros repository key
+
+    - name: install ros repository key
+      action: command /usr/bin/apt-key add /home/vagrant/binfrastructure/ros/ros.key
 #      action: command /usr/bin/apt-key add /tmp/ros.key
-#
-#    - name: add ros fuerte repository
-#      action: apt_repository repo='deb http://packages.ros.org/ros/ubuntu precise main' state=present
-#
-#    - name: install ros
-#      action: apt pkg=ros-fuerte-desktop-full state=present
-#
-#    - name: install third-party ros packages
-#      action: apt pkg=$item state=present
-#      with_items:
-#        - ros-fuerte-rosbridge-suite
+
+    - name: add ros repository
+      action: apt_repository repo='deb http://packages.ros.org/ros-shadow-fixed/ubuntu precise main' state=present
+
+    - name: install ros packages
+      action: apt pkg=$item state=present
+      with_items:
+        - ros-groovy-ros-comm
+        - ros-groovy-actionlib
+        - python-rosinstall
+
+    # Generate proper setup.sh files to work under deployed environment
+    - name: generate ros workspace files step 1
+      action: command /bin/rm .rosinstall chdir='~/binfrastructure/ros'
+
+    - name: generate ros workspace files step 2
+      action: command /usr/bin/rosws init . /opt/ros/groovy chdir='~/binfrastructure/ros'
+
+    - name: generate ros workspace files step 3
+      action: command /usr/bin/rosws set src -y chdir='~/binfrastructure/ros'
+
+    # TODO: initialize rosdep with sudo rosdep init and rosdep update
 
     #-------------
     # Application
