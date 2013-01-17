@@ -56,62 +56,32 @@ class Bin(models.Model):
 ###############################################################################
 
 """
-BIF Actions are modeled as a (name, params) pair, where the "name" is one of
-the defined in the API, identifying the function to call, and the "params" is a
-string of space separated values to be interpreted as the function paramter(s).
+BIF Actions are modeled as a (action, params) pair, where the "action" is one
+of the defined in the API, identifying the function to call, and the "params"
+is a stringified JSON object representing the values to be interpreted as the
+function parameter(s).
 
-Each BIF Action is expected to be able to build its arguments from the "params"
-string (which is a JSON stringified). As an example, consider a "go_to_pose"
-action receiving a params string like "3.0 -2.2 1.5". It should correspond to a
-call to
-
-   go_to_pose(Pose(x=3.0, y=-2.2, angle=1.5))
-
-The to_dict() method of a BIFAction produces a dict instance with keys "name"
-and "params". The "name" is the API function to invoke; the "params" is a
-python object (corresponding to the 'params' JSON object stringified in the
-model instance), ready to be passed to that function.
-
-It is to be noted that the "params" string is limited. This is so to simplify
-implementation. The maximum length is exposed as MAX_LENGTH_PARAMS_STRING.
-
-PARAMS DESERIALIZATION:
-
-  "...id_list" kind of params string is expected to be an array of ID values
-  (what every type they may be).
-  It's turned into a list of IDs.
-
-  "pose" kind of params string is expected to be a object with the "x", "y"
-  and "angle" values of a Pose instance.
-  It's turned into a (non-saved) Pose instance.
-
-  "text" kind of params string are considered to be a single string and
-  interpreted as-is.
-
-  "seconds" kind of params string are expected to be a single numeric value.
-  It's turned into a float.
-
-This deserialization allows for the client to serialize JSON objects and pass
-them on, which is the simplest possible thing. Examples:
+Consider for example this client code, which builds a "api_call" object ready
+to be sent to the server.:
 
   var api_call = {
-    name: 'go_to_pose',
-    parameters: {x: 1.0, y: 2.0, angle: 3.14}
+    action: 'go_to_pose',
+    params: {'pose_x': 1.0, 'pose_y': 2.0, 'pose_angle': 3.14}
     }
 
   var api_call = {
-    name: 'pick_up_from_locations',
-    parameters: [1,2,3,4]
+    action: 'pick_up_from_locations',
+    params: {'locations': [1,2,3,4]}
     }
 
   var api_call = {
-    name: 'speak',
-    parameters: 'something'
+    action: 'speak',
+    params: {'text': 'something'}
     }
 
   var api_call = {
-    name: 'wait',
-    parameters: 2.0
+    action: 'wait',
+    params: {'seconds': 2.0}
     }
 """
 
@@ -122,8 +92,8 @@ MAX_LENGTH_PARAMS_STRING = 200
 # choice[1] : web UI name for the action.
 API_call_choices = (
     ('pick_up_bin', 'pick_up_bin'),
-    ('pick_up_bin_from_location', 'pick_up_bin_from_location'),
-    ('drop_off_bin_at_location', 'drop_off_bin_at_location'),
+    ('pick_up_bin_from_locations', 'pick_up_bin_from_locations'),
+    ('drop_off_bin_at_locations', 'drop_off_bin_at_locations'),
     ('go_to_pose', 'go_to_pose'),
     ('speak', 'speak'),
     ('wait', 'wait'),
@@ -155,11 +125,11 @@ class BIFAction(models.Model):
 
         Raises ValueError if data is not good.
         """
-        if not ('name' in dict_action and 'params' in dict_action):
-            raise ValueError('The dict() needs "name" and "params"')
-        if dict_action['name'] not in [c[0] for c in API_call_choices]:
-            raise ValueError('bad bif_action name.')
-        return _class(name=dict_action['name'],
+        if not ('action' in dict_action and 'params' in dict_action):
+            raise ValueError('The dict() needs "action" and "params"')
+        if dict_action['action'] not in [c[0] for c in API_call_choices]:
+            raise ValueError('bad bif_action "action" name.')
+        return _class(name=dict_action['action'],
                       params=json.dumps(dict_action['params']))
 
     def to_dict(self):
@@ -172,11 +142,8 @@ class BIFAction(models.Model):
             raise ValueError("bad API call name.")
 
         params = json.loads(self.params)
-        if self.name == "go_to_pose":
-            params = Pose(**params)
-
         action_dict = {
-            'name': self.name,
+            'action': self.name,
             'params': params
         }
         return action_dict
