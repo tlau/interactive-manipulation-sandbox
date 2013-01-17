@@ -24,6 +24,11 @@ TEMPLATE_DIRS = (
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
+    'formatters': {
+        'process-module': {
+            'format': '%(asctime)s -- PID:%(process)s -- %(module)s -- %(message)s',
+        }
+    },
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
@@ -39,7 +44,13 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
         },
+        'robot-console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'process-module',
+        },
     },
+
     'loggers': {
         'django.request': {
             'handlers': ['mail_admins'],
@@ -50,6 +61,11 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
+        },
+        'robot': {
+            'handlers': ['robot-console'],
+            'level': 'DEBUG',
+            'propagate': True,
         },
     },
 }
