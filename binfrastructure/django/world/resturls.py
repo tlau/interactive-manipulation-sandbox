@@ -17,7 +17,7 @@ class ExplicitPoseSerializer(serializers.ModelSerializer):
 
 
 class BinLocationSerializer(serializers.ModelSerializer):
-    pickup_dropoff_pose = ExplicitPoseSerializer(source='pickup_dropoff_pose')
+    pickup_dropoff_pose = ExplicitPoseSerializer(source='pose')
 
     class Meta:
         model = BinLocation

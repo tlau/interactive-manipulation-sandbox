@@ -20,7 +20,7 @@ class BinLocation(models.Model):
     name = models.CharField(max_length=200, blank=True)
 
     # Where / how bins can be picked up or droped off.
-    pickup_dropoff_pose = models.OneToOneField(Pose)
+    pose = models.OneToOneField(Pose)
 
     # tags...
 
