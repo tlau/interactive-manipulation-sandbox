@@ -50,7 +50,7 @@ function(
 
     display_location: function(loc) {
       if (loc) {
-        return loc.name;
+        return loc.get('name');
       } else {
         return '???';
       }
