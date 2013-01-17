@@ -1,0 +1,4 @@
+In order to be able to use the files here you need to:
+- sudo apt-get install python-rosinstall ros-groovy-ros-comm
+- rowsws init . /opt/ros/groovy
+and then you'll have a setup.bash that you can source

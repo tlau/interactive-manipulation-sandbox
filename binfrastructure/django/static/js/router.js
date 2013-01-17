@@ -6,7 +6,8 @@ define([
   'views/application',
   'views/program',
   'models/robot',
-  'models/bin'
+  'models/bin',
+  'models/binlocation'
 ],
 function(
   Ember,
@@ -16,7 +17,8 @@ function(
   ApplicationView,
   ProgramView,
   Robot,
-  Bin
+  Bin,
+  Binlocation
 ) {
 
   App.Router = Ember.Router.extend({

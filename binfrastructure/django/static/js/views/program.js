@@ -3,6 +3,7 @@ define([
   'd3',
   'app',
   'step',
+  'models/binlocation',
   'text!templates/program.handlebars'
 ],
 function(
@@ -10,6 +11,7 @@ function(
   d3,
   App,
   Step,
+  Binlocation,
   programHtml
 ) {
 
@@ -21,7 +23,9 @@ function(
     selected_step: null,
 
     // Soon this will be loaded from the database instead
-    locations: [
+    locations: Binlocation.find(),
+    /*
+    [
       { 'name': "Elvio's office" },
       { 'name': "Julian's office" },
       { 'name': "the kitchen" },
@@ -31,6 +35,7 @@ function(
       { 'name': "Kaijen's office" },
       { 'name': "the White Lab" }
     ],
+    */
     selected_location: null,
 
     // Default time periods
@@ -47,7 +52,6 @@ function(
     },
 
     drawProgram: function() {
-      console.log("Drawing program", this.get('program'));
       var _this = this;
       var stepdiv = d3.select('.step_container');
       var steps = stepdiv.selectAll('.step')
@@ -59,7 +63,7 @@ function(
 
       steps
           .attr('index', function(d, i) { return i; })
-          .text(function(d) { console.log("getting step title for", d); return d.display_title(); })
+          .text(function(d) { return d.display_title(); })
           .attr('id', function(d, i) { return 'step' + i; })
           .append('span')
             .attr('class', 'deletebutton nonselectable')
@@ -156,8 +160,7 @@ function(
     /* ---------------------------------------------------------------------- */
     // Specific actions
 
-    pickup : function(evt) {
-      var loc = this.locations[Math.floor(Math.random() * this.locations.length)].name;
+    pickup: function(evt) {
       this.addStep(Step.create({
         'type': 'pickup'
         }));
@@ -166,7 +169,6 @@ function(
     onLocationChange: function(evt) {
       if (!this.get('selected_location')) return;
 
-      console.log('selected location:', this.get('selected_location').name); 
       var step = this.get('program')[this.get('selected_step')];
       if (step) {
         step.setParam('location', this.get('selected_location'));
@@ -179,28 +181,20 @@ function(
     }.observes('selected_location'),
 
     dropoff: function(evt) {
-      var loc = this.locations[Math.floor(Math.random() * this.locations.length)].name;
       this.addStep(Step.create({
-        'title': 'Drop off at ' + loc,
-        'type': 'dropoff',
-        'location': loc,
+        'type': 'dropoff'
         }));
     },
 
     gotoPlace: function(evt) {
-      var loc = this.locations[Math.floor(Math.random() * this.locations.length)].name;
       this.addStep(Step.create({
-        'title': 'Take bin to ' + loc,
-        'type': 'goto',
-        'location': loc,
+        'type': 'goto'
         }));
     },
 
     speak: function(evt) {
       this.addStep(Step.create({
-        'title': 'Say "Hello!"',
-        'type': 'speak',
-        'text': 'Hello!',
+        'type': 'speak'
         }));
     },
 
