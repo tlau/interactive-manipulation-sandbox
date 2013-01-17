@@ -67,12 +67,15 @@ def single_program(request, pk, format=None):
             for action_dict in instructions_data:
                 new_instructions.append(BIFAction.from_dict(action_dict))
 
-        except (ValueError, KeyError) as e:
+        except (ValueError, KeyError, TypeError) as e:
             # KeyError: POSTed data does not have a "program" data.
             # ValueError: POSTed program had invalid JSON format.
             # ValueError: interpreted program is not a BIF program.
-            logger.debug('Exception serializing a program: %s' % e)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            logger.debug('Exception reading a program: %s' % e)
+            reason = {
+                'details': "Bad program format: %s" % e
+                }
+            return Response(reason, status=status.HTTP_400_BAD_REQUEST)
         program.name = new_name
         program.replace_instruction_sequence(new_instructions)
         program.save()
@@ -114,12 +117,12 @@ def programs(request, format=None):
                 action = BIFAction.from_dict(action_dict)
                 action.instruction_number = instruction_index
                 new_instructions.append(action)
-        except (ValueError, TypeError) as e:
-            # TypeError: POSTed data does not have "name"/""instructions" data.
+        except (ValueError, TypeError, KeyError) as e:
+            # KeyError, TypeError: POSTed data has bad shape.
             # ValueError: interpreted program is not a BIF program.
             logger.debug('Exception creating new program: %s' % e)
             reason = {
-                'detail': "Bad program format."
+                'detail': "Bad program format: %s" % e,
                 }
             return Response(reason, status=status.HTTP_400_BAD_REQUEST)
 
