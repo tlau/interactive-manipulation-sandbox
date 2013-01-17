@@ -557,3 +557,8 @@ a {
 	/* Override margins for buttons in program panel */
 	margin: 10px;
 }
+
+.mappoint {
+    fill: #00ff00;
+    stroke: black;
+}

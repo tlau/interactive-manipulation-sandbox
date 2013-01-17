@@ -40,7 +40,7 @@ function(
       } else if (this.type === 'dropoff') {
         return 'Drop off at ' + this.display_location(this.getParam('location'));
       } else if (this.type === 'goto') {
-        return 'Go to ' + this.display_location(this.getParam('location'));
+        return 'Go to ' + this.display_pose(this.getParam('pose'));
       } else if (this.type === 'speak') {
         return 'Say "' + this.display_text(this.getParam('text')) + '"';
       } else if (this.type === 'wait') {
@@ -69,6 +69,14 @@ function(
         return duration;
       } else {
         return '???';
+      }
+    },
+
+    display_pose: function(pose) {
+      if (pose) {
+        return '(' + pose.x.toFixed(2) + ', ' + pose.y.toFixed(2) + ')';
+      } else {
+        return '(?, ?)';
       }
     },
 

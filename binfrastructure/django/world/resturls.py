@@ -1,4 +1,3 @@
-import json
 import logging
 from rest_framework import status, generics, serializers
 from rest_framework.decorators import parser_classes, api_view
@@ -18,22 +17,22 @@ class ExplicitPoseSerializer(serializers.ModelSerializer):
 
 
 class BinLocationSerializer(serializers.ModelSerializer):
-    pickup_dropoff_pose = ExplicitPoseSerializer(source='pickup_dropoff_pose')
+    pose = ExplicitPoseSerializer(source='pose')
 
     class Meta:
         model = BinLocation
 
 
-class InstructionSerializer(serializers.ModelSerializer):
+class StepSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BIFAction
-        exclude = ['id', 'program', 'instruction_number']
+        exclude = ['id', 'program', 'step_number']
 
 
 class ProgramSerializer(serializers.ModelSerializer):
 
-    instructions = InstructionSerializer(source='instruction_sequence')
+    steps = StepSerializer(source='step_sequence')
 
     class Meta:
         model = BIFProgram
@@ -62,25 +61,28 @@ def single_program(request, pk, format=None):
             program_data = request.DATA
             # new_program_data = json.loads(data)
             new_name = program_data['name']
-            instructions_data = program_data['instructions']
-            new_instructions = []
-            for action_dict in instructions_data:
-                new_instructions.append(BIFAction.from_dict(action_dict))
+            steps_data = program_data['steps']
+            new_steps = []
+            for action_dict in steps_data:
+                new_steps.append(BIFAction.from_dict(action_dict))
 
-        except (ValueError, KeyError) as e:
+        except (ValueError, KeyError, TypeError) as e:
             # KeyError: POSTed data does not have a "program" data.
             # ValueError: POSTed program had invalid JSON format.
             # ValueError: interpreted program is not a BIF program.
-            logger.debug('Exception serializing a program: %s' % e)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            logger.debug('Exception reading a program: %s' % e)
+            reason = {
+                'details': "Bad program format: %s" % e
+                }
+            return Response(reason, status=status.HTTP_400_BAD_REQUEST)
         program.name = new_name
-        program.replace_instruction_sequence(new_instructions)
+        program.replace_step_sequence(new_steps)
         program.save()
         serializer = ProgramSerializer(program)
         return Response(serializer.data, status.HTTP_200_OK)
 
     elif request.method == 'DELETE':
-        # Deleting a program deletes all of its instructions.
+        # Deleting a program deletes all of its steps.
         program.delete()
         return Response(status.HTTP_200_OK)
 
@@ -114,12 +116,12 @@ def programs(request, format=None):
                 action = BIFAction.from_dict(action_dict)
                 action.instruction_number = instruction_index
                 new_instructions.append(action)
-        except (ValueError, TypeError) as e:
-            # TypeError: POSTed data does not have "name"/""instructions" data.
+        except (ValueError, TypeError, KeyError) as e:
+            # KeyError, TypeError: POSTed data has bad shape.
             # ValueError: interpreted program is not a BIF program.
             logger.debug('Exception creating new program: %s' % e)
             reason = {
-                'detail': "Bad program format."
+                'detail': "Bad program format: %s" % e,
                 }
             return Response(reason, status=status.HTTP_400_BAD_REQUEST)
 

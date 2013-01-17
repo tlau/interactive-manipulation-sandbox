@@ -130,6 +130,11 @@ function(
       if (step.getParam('text')) {
         this.set('text_to_speak', step.getParam('text'));
       }
+
+      if (step.getParam('pose')) {
+        this.set('map_xy', this.transformPoseToMap(step.getParam('pose')));
+        console.log('map_xy is:', this.get('map_xy'));
+      }
     },
 
     showPanel: function(steptype) {
@@ -155,11 +160,13 @@ function(
       this.set('selected_time', null);
       this.set('selected_time_period', null);
       this.set('text_to_speak', null);
+      this.set('map_xy', null);
     },
   
     /* ---------------------------------------------------------------------- */
     // Specific actions
 
+    /* PICKUP ---------------------------------------------------------------------- */
     pickup: function(evt) {
       this.addStep(Step.create({
         'type': 'pickup'
@@ -180,18 +187,62 @@ function(
       this.drawProgram();
     }.observes('selected_location'),
 
+    /* DROPOFF ---------------------------------------------------------------------- */
     dropoff: function(evt) {
       this.addStep(Step.create({
         'type': 'dropoff'
         }));
     },
 
+    /* GOTO ---------------------------------------------------------------------- */
     gotoPlace: function(evt) {
       this.addStep(Step.create({
         'type': 'goto'
         }));
     },
 
+    onSelectLocation: function(evt) {
+      // Workaround for Firefox because it does not provide the offsetX/Y values
+      if (typeof evt.offsetX === 'undefined' || typeof evt.offsetY === 'undefined') {
+        var targetOffset = $(evt.target).offset();
+        evt.offsetX = evt.pageX - targetOffset.left;
+        evt.offsetY = evt.pageY - targetOffset.top;
+      }
+
+      this.set('map_xy', {x: evt.offsetX, y: evt.offsetY});
+
+      // Update Pose in selected step
+      var step = this.get('program')[this.get('selected_step')];
+      if (step) {
+        step.setParam('pose', this.transformMapToPose(this.get('map_xy')));
+      } else {
+        console.log("Error: setting parameter pose of unknown step!");
+      }
+
+      this.drawProgram();
+    },
+
+    drawSelectedPointOnMap: function() {
+      console.log("drawing selected point on map");
+      if (this.get('map_xy') === null) return;
+
+      var _this = this;
+      var map = d3.select('#map');
+      var mappoint = map.selectAll('.mappoint')
+        .data([this.get('map_xy')]);
+
+      mappoint.enter().append('svg:circle')
+        .attr('class', 'mappoint')
+        .attr('r', 5);
+
+      mappoint
+        .attr('cx', function(d) {return d.x;})
+        .attr('cy', function(d) {return d.y;});
+
+      mappoint.exit().remove();
+    }.observes('map_xy'),
+
+    /* SPEAK ---------------------------------------------------------------------- */
     speak: function(evt) {
       this.addStep(Step.create({
         'type': 'speak'
@@ -212,6 +263,7 @@ function(
       this.drawProgram();
     }.observes('text_to_speak'),
 
+    /* WAIT ---------------------------------------------------------------------- */
     wait: function(evt) {
       var num = (Math.floor(Math.random() * 29) + 1) * 10;
       var step = Step.create({
@@ -273,19 +325,59 @@ function(
         'name': 'My Program'
       };
       var ret_json = JSON.stringify(ret);
+      console.log(ret_json);
 
       // Send ret to the middleware layer here
       var xhr = new XMLHttpRequest();
       xhr.open('POST', '/world/api/programs', true);
+      xhr.setRequestHeader('Content-type', 'application/json')
       xhr.onreadystatechange = function() {
         // Call this when the state changes
+        console.log("Server response:", xhr.responseText);
+        /*
         if (xhr.readyState == 4 && xhr.status == 200) {
-          console.log(xhr.responseText);
+          console.log("Server response:", xhr.responseText);
         }
+        */
       };
       xhr.send(ret_json);
     },
 
+    /* For converting map coords to a pose */
+    transformMapToPose: function(map) {
+      var pose = {};
+      if (map.x === -1) {
+        pose.x = -1;
+      }
+      else {
+        pose.x = -0.0471014974 * map.x + -0.107212915 * map.y + 58.2584626;
+      }
+      if (map.y === -1) {
+        pose.y = -1;
+      }
+      else {
+        pose.y = -0.109947748 * map.x + 0.045023192 * map.y + 48.7703124;
+      }
+      return pose;
+    },
+
+    /* For converting a pose to map coordinates */
+    transformPoseToMap: function(pose) {
+      var map = {};
+      if (pose.x === -1) {
+        map.x = -1;
+      }
+      else {
+        map.x = -3.2371041 * pose.x + -7.70845759 * pose.y + 564.53259318;
+      }
+      if (pose.y === -1) {
+        map.y = -1;
+      }
+      else {
+        map.y = -7.90508822 * pose.x + 3.38653133 * pose.y + 295.37609582;
+      }
+      return map;
+    }
 
   });
 
