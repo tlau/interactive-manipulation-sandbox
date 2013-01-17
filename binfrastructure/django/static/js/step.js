@@ -75,8 +75,8 @@ function(
     // Return a javascript object that will be serialized as JSON and sent to the midtier
     toAPI: function() {
       var ret = {
-        'name': this.type_to_API_mapping[this.type],
-        'parameters': this.parameters
+        'action': this.type_to_API_mapping[this.type],
+        'params': this.parameters
       };
 
       return ret;

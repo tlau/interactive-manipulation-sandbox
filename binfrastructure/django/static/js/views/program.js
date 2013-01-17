@@ -263,7 +263,7 @@ function(
     },
 
     /* ---------------------------------------------------------------------- */
-    // Program execution
+    // Program execution and saving
     runProgram: function(evt) {
       var ret = JSON.stringify(this.get('program').map(function (d) { return d.toAPI(); }));
       // Send ret to the middleware layer here
@@ -271,6 +271,26 @@ function(
       alert("Sorry, not implemented yet!");
     },
 
+    saveProgram: function(evt) {
+      
+      var steps = this.get('program').map(function (d) { return d.toAPI(); });
+      var ret = {
+        'steps': steps,
+        'name': 'My Program'
+      };
+      var ret_json = JSON.stringify(ret);
+
+      // Send ret to the middleware layer here
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/world/api/programs', true);
+      xhr.onreadystatechange = function() {
+        // Call this when the state changes
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          console.log(xhr.responseText);
+        }
+      };
+      xhr.send(ret_json);
+    },
 
 
   });
