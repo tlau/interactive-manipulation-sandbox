@@ -85,6 +85,52 @@ def single_program(request, pk, format=None):
         return Response(status.HTTP_200_OK)
 
 
+@api_view(['GET', 'POST'])
+@parser_classes([JSONParser])
+def programs(request, format=None):
+    """Operate on the collection of programs.
+
+    TODO: implement as a class based view; the REST framework can reduce this
+    code to three small methods.
+    """
+    if request.method == 'GET':
+        # Get all the programs from the system.
+        programs = BIFProgram.objects.all()
+        serializer = ProgramSerializer(programs)
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        # Add a new program to the system.
+        try:
+            program_data = request.DATA
+            new_name = program_data['name']
+
+            instructions_data = program_data['instructions']
+            new_instructions = []
+            instruction_index = 0
+            for action_dict in instructions_data:
+                instruction_index += 1
+                # Don't save the new BIF Actions until they pass parsing.
+                action = BIFAction.from_dict(action_dict)
+                action.instruction_number = instruction_index
+                new_instructions.append(action)
+        except (ValueError, TypeError) as e:
+            # TypeError: POSTed data does not have "name"/""instructions" data.
+            # ValueError: interpreted program is not a BIF program.
+            logger.debug('Exception creating new program: %s' % e)
+            reason = {
+                'detail': "Bad program format."
+                }
+            return Response(reason, status=status.HTTP_400_BAD_REQUEST)
+
+        program = BIFProgram(name=new_name)
+        program.save()
+        # Assign and save the instructions.
+        program.replace_instruction_sequence(new_instructions)
+        serializer = ProgramSerializer(program)
+        return Response(serializer.data, status.HTTP_200_OK)
+
+
 urlpatterns = patterns('',
     url(r'^binlocations$', generics.ListAPIView.as_view(
         model=BinLocation,
@@ -93,8 +139,6 @@ urlpatterns = patterns('',
         model=BinLocation,
         serializer_class=BinLocationSerializer)),
 
-    url(r'^programs$', generics.ListAPIView.as_view(
-        model=BIFProgram,
-        serializer_class=ProgramSerializer)),
+    url(r'^programs$', programs),
     url(r'^programs/(?P<pk>[^/]+)$', single_program),
 )
