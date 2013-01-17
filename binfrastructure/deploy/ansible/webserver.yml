@@ -17,6 +17,7 @@
       with_items:
         - vim
         - tmux
+        - screen
 
     #-------------
     # Python tools
@@ -126,3 +127,10 @@
     - name: set up local_settings.py for vagrant
       action: command /bin/cp local_settings.vagrant.py local_settings.py chdir='~/binfrastructure/django/server' creates=/home/vagrant/binfrastructure/django/server/local_settings.py
 
+    # Set-up a local database.
+    - name: setup a local SQLite database instance.
+      action: command ./manage.py syncdb --noinput chdir='~/binfrastructure/django/'
+
+    # Migrate the local database.
+    - name: migrate the local database to its latest state..
+      action: command ./manage.py migrate --all chdir='~/binfrastructure/django/'

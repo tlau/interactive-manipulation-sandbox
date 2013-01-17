@@ -3,6 +3,7 @@ define([
   'd3',
   'app',
   'step',
+  'models/binlocation',
   'text!templates/program.handlebars'
 ],
 function(
@@ -10,17 +11,40 @@ function(
   d3,
   App,
   Step,
+  Binlocation,
   programHtml
 ) {
 
   App.ProgramView = Ember.View.extend({
     template: Ember.Handlebars.compile(programHtml),
 
+    // Keeping track of the program and the program counter
     program: new Array(),
+    selected_step: null,
+
+    // Soon this will be loaded from the database instead
+    locations: Binlocation.find(),
+    /*
+    [
+      { 'name': "Elvio's office" },
+      { 'name': "Julian's office" },
+      { 'name': "the kitchen" },
+      { 'name': "the Green Room" },
+      { 'name': "the stockroom" },
+      { 'name': "Esmi's office" },
+      { 'name': "Kaijen's office" },
+      { 'name': "the White Lab" }
+    ],
+    */
+    selected_location: null,
+
+    // Default time periods
+    time_periods: [
+      'seconds', 'minutes', 'hours'
+    ],
+    selected_time: null,
 
     didInsertElement: function() {
-      console.log("in didIE for Program");
-
       // Doesn't work
       // this.addObserver('program', this, 'drawProgram');
 
@@ -31,7 +55,7 @@ function(
       var _this = this;
       var stepdiv = d3.select('.step_container');
       var steps = stepdiv.selectAll('.step')
-        .data(this.program);
+        .data(this.get('program'));
 
       steps.enter().append('div')
           .attr('class', 'step nonselectable')
@@ -39,12 +63,16 @@ function(
 
       steps
           .attr('index', function(d, i) { return i; })
-          .text(function(d) { return d.title; })
+          .text(function(d) { return d.display_title(); })
           .attr('id', function(d, i) { return 'step' + i; })
           .append('span')
             .attr('class', 'deletebutton nonselectable')
             .text('[X]')
-            .on('click', function(d, i) { _this.deleteStep(i); });
+            .on('click', function(d, i) {
+              _this.deleteStep(i);
+              // Prevent the click from bubbling up to selectStep
+              d3.event.stopPropagation();
+            });
 
         steps.exit().remove();
     },
@@ -53,13 +81,24 @@ function(
     // Adding/deleting steps
 
     deleteStep: function(index) {
-      this.program.splice(index, 1);
+      // Remove the step from the program
+      var program = this.get('program');
+      program.splice(index, 1);
+      this.set('program', program);
+
+      // Update selected step
+      if ((this.get('selected_step') < 0) || (this.get('selected_step') >= this.get('program').length)) {
+        this.set('selected_step', null);
+      } 
+
       // manually redraw the program; I can't get Ember observers to work
       this.drawProgram();
     },
 
     addStep: function(newstep) {
-      var index = this.program.push(newstep) - 1;
+      var program = this.get('program');
+      var index = program.push(newstep) - 1;
+      this.set('program', program);
 
       // manually redraw the program; I can't get Ember observers to work
       this.drawProgram();
@@ -68,11 +107,29 @@ function(
 
     // Change which step is currently selected
     selectStep: function(index) {
+      this.set('selected_step', index);
+
       $('.selected').removeClass('selected');
       $('#step' + index).addClass('selected');
 
-      var step = this.program[index];
+      var step = this.get('program')[index];
       this.showPanel(step.type);
+
+      // Wiring to update UI which Ember would have done for us
+      if (step.getParam('location')) {
+        this.set('selected_location', step.getParam('location'));
+      }
+
+      if (step.getParam('duration')) {
+        this.set('selected_time', step.getParam('duration'));
+      }
+      if (step.getParam('time_period')) {
+        this.set('selected_time_period', step.getParam('time_period'));
+      }
+
+      if (step.getParam('text')) {
+        this.set('text_to_speak', step.getParam('text'));
+      }
     },
 
     showPanel: function(steptype) {
@@ -94,60 +151,103 @@ function(
     // Switch back to actions view
     doneEditingStep: function(index) {
       this.showPanel(null);
+      this.set('selected_location', null);
+      this.set('selected_time', null);
+      this.set('selected_time_period', null);
+      this.set('text_to_speak', null);
     },
   
     /* ---------------------------------------------------------------------- */
     // Specific actions
 
-    pickup : function(evt) {
-      var locations = new Array("Elvio's office", "Julian's office", "the kitchen",
-        "the Green Room", "the stockroom", "Esmi's office", "Kaijen's office", "the White Lab");
-      var loc = locations[Math.floor(Math.random() * locations.length)];
+    pickup: function(evt) {
       this.addStep(Step.create({
-        'title': 'Pick up from ' + loc,
-        'type': 'pickup',
-        'location': loc,
+        'type': 'pickup'
         }));
     },
 
+    onLocationChange: function(evt) {
+      if (!this.get('selected_location')) return;
+
+      var step = this.get('program')[this.get('selected_step')];
+      if (step) {
+        step.setParam('location', this.get('selected_location'));
+      } else {
+        console.log("Error: setting parameter of unknown step!");
+      }
+
+      // Refresh the program
+      this.drawProgram();
+    }.observes('selected_location'),
+
     dropoff: function(evt) {
-      var locations = new Array("Elvio's office", "Julian's office", "the kitchen",
-        "the Green Room", "the stockroom", "Esmi's office", "Kaijen's office", "the White Lab");
-      var loc = locations[Math.floor(Math.random() * locations.length)];
       this.addStep(Step.create({
-        'title': 'Drop off at ' + loc,
-        'type': 'dropoff',
-        'location': loc,
+        'type': 'dropoff'
         }));
     },
 
     gotoPlace: function(evt) {
-      var locations = new Array("Elvio's office", "Julian's office", "the kitchen",
-        "the Green Room", "the stockroom", "Esmi's office", "Kaijen's office", "the White Lab");
-      var loc = locations[Math.floor(Math.random() * locations.length)];
       this.addStep(Step.create({
-        'title': 'Take bin to ' + loc,
-        'type': 'goto',
-        'location': loc,
+        'type': 'goto'
         }));
     },
 
     speak: function(evt) {
       this.addStep(Step.create({
-        'title': 'Say "Hello!"',
-        'type': 'speak',
-        'text': 'Hello!',
+        'type': 'speak'
         }));
     },
 
+    onSpeakTextChange: function(evt) {
+      if (this.get('text_to_speak')) {
+        var step = this.get('program')[this.get('selected_step')];
+        if (step) {
+          step.setParam('text', this.get('text_to_speak'));
+        } else {
+          console.log("Error: setting parameter of unknown step!");
+        }
+      }
+
+      // Refresh the program
+      this.drawProgram();
+    }.observes('text_to_speak'),
+
     wait: function(evt) {
       var num = (Math.floor(Math.random() * 29) + 1) * 10;
-      this.addStep(Step.create({
-        'title': 'Wait ' + num + ' seconds',
+      var step = Step.create({
         'type':'wait',
-        'duration': num,
-        }));
+        });
+      step.setParam('time_period', 'seconds');
+      this.addStep(step);
     },
+
+    onTimeChange: function(evt) {
+      if (this.get('selected_time')) {
+        var step = this.get('program')[this.get('selected_step')];
+        if (step) {
+          step.setParam('duration', this.get('selected_time'));
+        } else {
+          console.log("Error: setting parameter of unknown step!");
+        }
+      }
+
+      // Refresh the program
+      this.drawProgram();
+    }.observes('selected_time'),
+
+    onTimePeriodChange: function(evt) {
+      if (this.get('selected_time_period')) {
+        var step = this.get('program')[this.get('selected_step')];
+        if (step) {
+          step.setParam('time_period', this.get('selected_time_period'));
+        } else {
+          console.log("Error: setting parameter of unknown step!");
+        }
+      }
+
+      // Refresh the program
+      this.drawProgram();
+    }.observes('selected_time_period'),
 
     recharge: function(evt) {
       this.addStep(Step.create({
@@ -157,14 +257,34 @@ function(
     },
 
     /* ---------------------------------------------------------------------- */
-    // Program execution
+    // Program execution and saving
     runProgram: function(evt) {
-      var ret = JSON.stringify(this.program.map(function (d) { return d.toAPI(); }));
+      var ret = JSON.stringify(this.get('program').map(function (d) { return d.toAPI(); }));
       // Send ret to the middleware layer here
       console.log(ret);
       alert("Sorry, not implemented yet!");
     },
 
+    saveProgram: function(evt) {
+      
+      var steps = this.get('program').map(function (d) { return d.toAPI(); });
+      var ret = {
+        'steps': steps,
+        'name': 'My Program'
+      };
+      var ret_json = JSON.stringify(ret);
+
+      // Send ret to the middleware layer here
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/world/api/programs', true);
+      xhr.onreadystatechange = function() {
+        // Call this when the state changes
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          console.log(xhr.responseText);
+        }
+      };
+      xhr.send(ret_json);
+    },
 
 
   });

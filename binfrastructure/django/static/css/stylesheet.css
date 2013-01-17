@@ -8,7 +8,7 @@ a {
     color: #0000ff;
     text-decoration: underline;
     font-weight: bold;
-	cursor: pointer;
+    cursor: pointer;
 }
 
 /* For clickable buttons */
@@ -235,13 +235,13 @@ a {
     background-color: #ddd;
     margin: 8px 0;
 
-	/* To prevent click-and-drag from selecting text */
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+    /* To prevent click-and-drag from selecting text */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 #tab-container ul li a,
 #tab-container ul li a:visited
@@ -279,49 +279,49 @@ a {
 /* Horizontal tabs */
 
 .horiztabs {
-	padding: 3px 0;
-	margin-left: 0;
-	margin-bottom: 0;
-	margin-top: 0.1em;
-	font: bold 12px;
-	border-bottom: 1px solid gray;
+    padding: 3px 0;
+    margin-left: 0;
+    margin-bottom: 0;
+    margin-top: 0.1em;
+    font: bold 12px;
+    border-bottom: 1px solid gray;
 }
 
 .horiztabs li {
-	list-style: none;
-	display: inline;
-	margin: 0;
+    list-style: none;
+    display: inline;
+    margin: 0;
 }
 
 .horiztabs li a {
-	text-decoration: none;
-	padding: 4px 0.5em;
-	margin-right: 3px;
-	border: 1px solid #778;
+    text-decoration: none;
+    padding: 4px 0.5em;
+    margin-right: 3px;
+    border: 1px solid #778;
     border-top: 8px solid #666;
-	border-bottom: none;
-	background: #ddd;
+    border-bottom: none;
+    background: #ddd;
     color: #666;
 
-	/* To prevent click-and-drag from selecting text */
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+    /* To prevent click-and-drag from selecting text */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .horiztabs li a:link, .horiztabs li a:visited {
 }
 
 .horiztabs li a:hover {
-	color: black;
+    color: black;
     border-top: 8px solid #333;
 }
 
 .horiztabs li a.current {
-	background: white;
+    background: white;
     border-top: 8px solid #08750C;
 }
 
@@ -340,6 +340,8 @@ a {
 .mybutton {
     margin: 20px;
     padding: 10px;
+    border: 1px solid black;
+    font-size: 14pt;
 
     background: #65a9d7;
     background: -webkit-gradient(linear, left top, left bottom, from(#3e779d), to(#65a9d7));
@@ -377,10 +379,10 @@ a {
 
     color: white;
     border-radius: 15px;
-	width: 120px;
-	height: 120px;
+    width: 120px;
+    height: 120px;
 
-	float: left;
+    float: left;
 
     cursor: pointer;
     -webkit-touch-callout: none;
@@ -402,7 +404,7 @@ a {
     background: red;
     color: black;
     border-radius: 5px;
-	border: 2px solid white;
+    border: 2px solid white;
     cursor: pointer;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -467,87 +469,91 @@ a {
 /* ---------------------------------------------------------------------- */
 /* The program container on the left side */
 .program_container {
-	display: table-cell;
-	width: 30%;
+    display: table-cell;
+    width: 30%;
 }
 
 .program {
-	background: #087b33;
-	border: 1px solid gray;
-	border-radius: 15px;
-	height: 600px;
-	padding: 10px;
-	margin-right: 10px;
-	color: white;
-	/* To place a button at the bottom */
-	position: relative;
+    background: #087b33;
+    border: 1px solid gray;
+    border-radius: 15px;
+    height: 600px;
+    padding: 10px;
+    margin-right: 10px;
+    color: white;
+    /* To place a button at the bottom */
+    position: relative;
 }
 
 /* The panel on the right side, normally containing actions */
 .actions_container {
-	display: table-cell;
-	width: 60%;
-	height: 600px;
+    display: table-cell;
+    width: 60%;
+    height: 600px;
 }
 
 #actions {
-	background: purple;
-	border: 1px solid gray;
-	border-radius: 15px;
-	padding: 10px;
-	height: 100%;
+    background: purple;
+    border: 1px solid gray;
+    border-radius: 15px;
+    padding: 10px;
+    height: 100%;
+    color: white;
 }
 
 .step {
-	border-radius: 5px;
-	background: yellow;
-	border: 1px solid black;
-	width: 95%;
-	margin-top: 10px;
-	margin-bottom: 10px;
-	padding: 5px;
-	cursor: pointer;
-	color: black;
+    border-radius: 5px;
+    background: yellow;
+    border: 1px solid black;
+    width: 95%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 5px;
+    cursor: pointer;
+    color: black;
 }
 
 .step.selected {
-	background: pink;
+    background: pink;
 }
 
 .deletebutton {
-	float: right;
-	background: lightgray;
+    float: right;
+    background: lightgray;
 }
 
 .step_container {
-	margin-top: 10px;
+    margin-top: 10px;
 }
 
 .hidden {
-	/* Don't display by default */
-	display: none;
+    /* Don't display by default */
+    display: none;
 }
 
-#pickup {
-    background: #65a9d7;
-	border: 1px solid gray;
-	border-radius: 15px;
-	padding: 10px;
-	height: 100%;
+.actionPanel {
+    background: #304cc4;
+    border: 1px solid gray;
+    border-radius: 15px;
+    padding: 10px;
+    height: 100%;
+    color: white;
+    font-size: 20pt;
 }
 
-#dropoff {
-    background: #65a9d7;
-	border: 1px solid gray;
-	border-radius: 15px;
-	padding: 10px;
-	height: 100%;
+.inherit_font {
+    font-family: inherit;
+    font-size: inherit;
 }
 
-#goto {
-    background: #65a9d7;
-	border: 1px solid gray;
-	border-radius: 15px;
-	padding: 10px;
-	height: 100%;
+.header_text {
+    font-size: 30pt;
+}
+
+.bottom_buttonbar div {
+	display: inline;
+}
+.bottom_buttonbar .mybutton {
+	/* Override margins for buttons in program panel */
+	margin: 10px;
 }

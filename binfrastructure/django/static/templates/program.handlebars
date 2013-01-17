@@ -1,13 +1,14 @@
 <div class="program_container">
   <div class="program">
 
-    <div> Robot program </div>
+    <div class="header_text"> Robot program </div>
 
     <div class="step_container"></div>
 
     <div> <i>Click an action to add it to the program...</i> </div>
 
-    <div class="bottom_buttonbar" style="position: absolute; bottom: 0px; right: 0px;">
+    <div class="bottom_buttonbar" style="position: absolute; bottom: 25px; right: 0px; float: right;">
+      <div class="mybutton" {{action saveProgram target="view"}}>Save for later</div>
       <div class="mybutton" {{action runProgram target="view"}}>Do it now!</div>
     </div>
 
@@ -18,39 +19,93 @@
 
   <div id="actions">
 
-    <div style="color: white;">Robot actions</div>
+    <div class="header_text">Robot actions</div>
 
     <div class="action_button" {{action pickup target="view"}}> Pick up bin </div>
     <div class="action_button" {{action dropoff target="view"}}> Drop off bin </div>
     <div class="action_button" {{action gotoPlace target="view"}}> Go to place </div>
     <div class="action_button" {{action speak target="view"}}> Speak aloud </div>
     <div class="action_button" {{action wait target="view"}}> Wait </div>
-    <div class="action_button" {{action recharge target="view"}}> Recharge </div>
 
   </div>
 
-  <div id="pickup" class="hidden" style="position: relative;">
-    Pickup a bin...
+  <div id="pickup" class="actionPanel hidden" style="position: relative;">
+
+    <div class="header_text">Pick up a bin</div>
+    <br><br><br>
+
+    Pick up bin from
+
+    {{view Ember.Select
+        contentBinding="view.locations"
+        selectionBinding="view.selected_location"
+        optionLabelPath="content.name"
+        optionValuePath="content"
+        prompt="(choose location)"
+        class="inherit_font"}}
+
+    <div style="position: absolute; bottom: 0px; right: 0px;">
+        <div class="mybutton" {{action doneEditingStep target="view"}}> Done </div>
+    </div>
+  </div>
+
+  <div id="dropoff" class="actionPanel hidden" style="position: relative;">
+    <div class="header_text"> Drop off a bin </div>
+    <br><br><br>
+
+    Drop off bin at
+
+    {{view Ember.Select
+        contentBinding="view.locations"
+        selectionBinding="view.selected_location"
+        optionLabelPath="content.name"
+        optionValuePath="content"
+        prompt="(choose location)"
+        class="inherit_font"}}
 
     <div style="position: absolute; bottom: 0px; right: 0px;">
       <div class="mybutton" {{action doneEditingStep target="view"}}> Done </div>
     </div>
   </div>
 
-  <div id="dropoff" class="hidden" style="position: relative;">
-    Drop off a bin...
+  <div id="goto" class="actionPanel hidden" style="position: relative;">
+    <div class="header_text"> Go to place </div>
+    <br><br><br>
+
+    (under construction)
 
     <div style="position: absolute; bottom: 0px; right: 0px;">
       <div class="mybutton" {{action doneEditingStep target="view"}}> Done </div>
     </div>
   </div>
 
-  <div id="goto" class="hidden" style="position: relative;">
-    Go to a place...
+  <div id="speak" class="actionPanel hidden" style="position: relative;">
+    <div class="header_text"> Speak aloud </div>
+    <br><br><br>
+
+    Say {{view Ember.TextField valueBinding="view.text_to_speak" class="inherit_font" size="20"}}
 
     <div style="position: absolute; bottom: 0px; right: 0px;">
       <div class="mybutton" {{action doneEditingStep target="view"}}> Done </div>
     </div>
   </div>
+
+  <div id="wait" class="actionPanel hidden" style="position: relative;">
+    <div class="header_text"> Wait for a while </div>
+    <br><br><br>
+
+    Wait
+    {{view Ember.TextField valueBinding="view.selected_time" class="inherit_font" size="5"}}
+    {{view Ember.Select
+      contentBinding="view.time_periods"
+      selectionBinding="view.selected_time_period"
+      class="inherit_font"
+      }}
+
+    <div style="position: absolute; bottom: 0px; right: 0px;">
+      <div class="mybutton" {{action doneEditingStep target="view"}}> Done </div>
+    </div>
+  </div>
+
 </div>
 
