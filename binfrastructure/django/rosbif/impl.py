@@ -2,6 +2,10 @@
 This class implements access to the ROS functions necessary to actually have impact on the robots. The rest
 of the components in the Web application will access the robot through this interface.
 '''
+# HACK: Prepend rospy-from-source location in python path while we work with hacked rospy
+import os, sys
+ROSPY_SRC='/'.join(os.path.abspath(__file__).split('/')[:-3]) + '/ros/src/ros_comm/clients/rospy/src'
+sys.path.insert(0,ROSPY_SRC)
 
 # Fail to initialize if the ROS environment is not set-up
 import os
@@ -11,6 +15,7 @@ if not ROS_MASTER_URI:
 else:
     print "Using ROS_MASTER_URI = %s" % ROS_MASTER_URI
 
+import rospy
 import rosgraph
 import rosnode
 import actionlib
@@ -37,8 +42,7 @@ def _init_ros():
     except:
         raise Exception("Unable to communicate with ROS master")
 
-    # If everything looks OK, try importing rospy, etc.
-    import rospy; globals()['rospy'] = rospy
+    # If everything looks OK, try initializing rospy, etc.
     rospy.init_node( NODE_NAME, anonymous=True)
     _ros_ready = True
 
