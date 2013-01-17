@@ -70,9 +70,14 @@
 
   <div id="goto" class="actionPanel hidden" style="position: relative;">
     <div class="header_text"> Go to place </div>
-    <br><br><br>
+    <br>
 
-    (under construction)
+    <div align="center">
+      Tap where you would like to send the robot<br><br>
+      <svg id="map" width="480" height="374" {{action onSelectLocation target="view"}}>
+        <image xlink:href="/static/img/willow-floorplan.png" width="480" height="374"></image>
+      </svg>
+    </div>
 
     <div style="position: absolute; bottom: 0px; right: 0px;">
       <div class="mybutton" {{action doneEditingStep target="view"}}> Done </div>
