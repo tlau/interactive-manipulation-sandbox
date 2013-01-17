@@ -5,8 +5,7 @@ Vagrant::Config.run do |config|
   config.vm.box_url = "http://files.vagrantup.com/precise64.box"
 
   # Forward guest port to host port
-  config.vm.forward_port 8001, 8001
-#  config.vm.forward_port 9090, 9090
+  config.vm.forward_port 8100, 8100
 
   # Change IP address for Vagrant host
   config.vm.customize ["modifyvm", :id, "--natnet1", "10.101.100/24"]
