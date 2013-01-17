@@ -1,12 +1,12 @@
 # This is the local_settings.py file for use with Vagrant.
 DATABASES = {
     'default': {
-        'ENGINE': '',   # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '',     # Or path to database file if using sqlite3.
-        'USER': '',     # Not used with sqlite3.
-        'PASSWORD': '', # Not used with sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'server.db',  # Or path to database file if using sqlite3.
+        'USER': '',                        # Not used with sqlite3.
+        'PASSWORD': '',                    # Not used with sqlite3.
         'HOST': '',     # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',     # Set to empty string for default. Not used with sqlite3.
+        'PORT': '',                        # Set to empty string for default. Not used with sqlite3.
     }
 }
 
@@ -20,3 +20,36 @@ STATICFILES_DIRS = (
 TEMPLATE_DIRS = (
     '/home/vagrant/binfrastructure/django/templates/'
 )
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'dev': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
