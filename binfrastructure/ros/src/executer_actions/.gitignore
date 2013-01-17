@@ -1,0 +1,6 @@
+msg
+build
+bin
+*.pyc
+src
+msg_gen
