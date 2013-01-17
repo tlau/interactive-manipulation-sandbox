@@ -1,5 +1,8 @@
 from django.db import models
 import json
+import logging
+
+logger = logging.getLogger('dev')
 
 
 class Pose(models.Model):
@@ -57,15 +60,17 @@ BIF Actions are modeled as a (name, params) pair, where the "name" is one of
 the defined in the API, identifying the function to call, and the "params" is a
 string of space separated values to be interpreted as the function paramter(s).
 
-Each BIF Action is expected to be able to build its arguments form the "params"
-string. As an example, consider a "go_to_pose" action receiving a params string
-like "3.0 -2.2 1.5". It should correspond to a call to
+Each BIF Action is expected to be able to build its arguments from the "params"
+string (which is a JSON stringified). As an example, consider a "go_to_pose"
+action receiving a params string like "3.0 -2.2 1.5". It should correspond to a
+call to
 
    go_to_pose(Pose(x=3.0, y=-2.2, angle=1.5))
 
 The to_dict() method of a BIFAction produces a dict instance with keys "name"
-and "arguments". The "name" is the API function to invoke; the "arguments" is a
-python object, ready to be passed to that function.
+and "params". The "name" is the API function to invoke; the "params" is a
+python object (corresponding to the 'params' JSON object stringified in the
+model instance), ready to be passed to that function.
 
 It is to be noted that the "params" string is limited. This is so to simplify
 implementation. The maximum length is exposed as MAX_LENGTH_PARAMS_STRING.
@@ -150,12 +155,12 @@ class BIFAction(models.Model):
 
         Raises ValueError if data is not good.
         """
-        if not ('name' in dict_action and 'arguments' in dict_action):
-            raise ValueError('The dict() needs "name" and "arguments"')
+        if not ('name' in dict_action and 'params' in dict_action):
+            raise ValueError('The dict() needs "name" and "params"')
         if dict_action['name'] not in [c[0] for c in API_call_choices]:
             raise ValueError('bad bif_action name.')
         return _class(name=dict_action['name'],
-                      params=json.dumps(dict_action['arguments']))
+                      params=json.dumps(dict_action['params']))
 
     def to_dict(self):
         """Produce a dict() representation of this instance.
@@ -166,14 +171,15 @@ class BIFAction(models.Model):
         if self.name not in [c[0] for c in API_call_choices]:
             raise ValueError("bad API call name.")
 
-        arguments = json.loads(self.params)
+        params = json.loads(self.params)
         if self.name == "go_to_pose":
-            arguments = Pose(**arguments)
+            params = Pose(**params)
 
-        return {
+        action_dict = {
             'name': self.name,
-            'arguments': arguments
+            'params': params
         }
+        return action_dict
 
 
 class BIFProgram(models.Model):
@@ -187,3 +193,22 @@ class BIFProgram(models.Model):
         """Return a QuerySet with the BIFAction instances which compose this
         program, ordered as they should be executed."""
         return self.instructions.order_by('instruction_number')
+
+    def replace_instruction_sequence(self, instruction_sequence):
+        """Allow to replace the instruction sequence of this program.
+
+        Each element in the "instruction_sequence" sequence is a BIFAction
+        instance, which will be commited to the database if it has not yet been
+        save()'d.
+
+        It is to be noted that the BIFActions are not copied, but assigned to
+        this program. If these BIFActions correspond to a different program,
+        said program would end up empty.
+        """
+        # Delete current instructions.
+        for instruction in self.instruction_sequence:
+            instruction.delete()
+        # Add the new instructions.
+        for instruction in instruction_sequence:
+            instruction.program = self
+            instruction.save()
