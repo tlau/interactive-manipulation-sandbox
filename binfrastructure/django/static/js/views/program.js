@@ -50,13 +50,11 @@ function(
       // This is called when our view has been instantiated. It's effectively the onLoad.
       
       // Load from local storage if possible
-      /*
       if (this.supports_html5_storage()) {
         var program = localStorage.getItem('binfrastructure.program');
         console.log("Loaded program:", program);
         this.deserializeProgram(program);
       }
-      */
     },
 
     // Check whether browser suppotrs local storage
@@ -113,7 +111,6 @@ function(
 
     addStep: function(newstep) {
       var program = this.get('program');
-      console.log('adding step to program:', newstep);
       program.pushObject(newstep);
       // Step is always added to the end
       var index = program.get('length') - 1;
@@ -303,7 +300,6 @@ function(
     onTimePeriodChange: function(evt) {
       if (this.get('selected_time_period') && (this.get('selected_step') !== null)) {
         var step = this.get('program').objectAt(this.get('selected_step'));
-        console.log('that step is', step);
         if (step) {
           step.setParam('time_period', this.get('selected_time_period'));
         } else {
@@ -341,7 +337,6 @@ function(
 
     deserializeProgram: function(json) {
       var program = this.get('program');
-//      this.set('program', program);
       if (json === null) return;
 
       var data = JSON.parse(json);
@@ -351,16 +346,10 @@ function(
         step.deserialize(stepdata);
         program.pushObject(step);
       }
-      console.log('setting new program from serialized version, should call drawProgram');
-//      this.set('program', program);
-//      console.log("Deserialized program:", this.get('program'));
     },
 
     /* Save program to local storage */
     saveProgram: function(evt) {
-      this.drawProgram();
-      return;
-
       if (!this.supports_html5_storage()) {
         alert("Your browser does not support HTML5-based local storage, sorry!");
         return;
@@ -369,6 +358,7 @@ function(
       var program = this.serializeProgram(this.get('program'));
       localStorage.setItem('binfrastructure.program', program);
       console.log('program saved');
+      return;
       
       // Persist program to a server database, not used yet
       if (false) {
