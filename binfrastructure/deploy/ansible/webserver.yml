@@ -108,14 +108,14 @@
         - python-rosinstall
 
     # Generate proper setup.sh files to work under deployed environment
-    - name: generate ros workspace files step 1
-      action: command /bin/rm .rosinstall chdir='~/binfrastructure/ros'
+    #- name: generate ros workspace files step 1
+    #  action: command /bin/rm .rosinstall chdir='~/binfrastructure/ros'
 
-    - name: generate ros workspace files step 2
-      action: command /usr/bin/rosws init . /opt/ros/groovy chdir='~/binfrastructure/ros'
+    #- name: generate ros workspace files step 2
+    #  action: command /usr/bin/rosws init . /opt/ros/groovy chdir='~/binfrastructure/ros'
 
-    - name: generate ros workspace files step 3
-      action: command /usr/bin/rosws set src -y chdir='~/binfrastructure/ros'
+    #- name: generate ros workspace files step 3
+    #  action: command /usr/bin/rosws set src -y chdir='~/binfrastructure/ros'
 
     # TODO: initialize rosdep with sudo rosdep init and rosdep update
 
