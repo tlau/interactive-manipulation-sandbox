@@ -7,6 +7,9 @@ import os, sys
 ROSPY_SRC='/'.join(os.path.abspath(__file__).split('/')[:-3]) + '/ros/src/ros_comm/clients/rospy/src'
 sys.path.insert(0,ROSPY_SRC)
 
+import logging
+logger = logging.getLogger('robot')
+
 # Fail to initialize if the ROS environment is not set-up
 import os
 ROS_MASTER_URI = os.getenv('ROS_MASTER_URI')
@@ -31,9 +34,13 @@ TIMEOUT = 20     # Timeout, in seconds for actionlib operations
 _ros_ready = False
 __ac = None
 def _init_ros():
+    logger.debug("INITIALIZING ROS NODE")
+
     # Make sure we do the initialization only once
     global _ros_ready
+    global __ac
     if _ros_ready:
+        logger.debug("(ROS NODE WAS READY)")
         return __ac
 
     # Do a safe, non-blocking test to see if we can communicate with the ROS master
@@ -49,13 +56,12 @@ def _init_ros():
     _ros_ready = True
 
     # Create an actionlib client and connect to server
-    global __ac
     __ac = actionlib.SimpleActionClient('/executer/execute', ExecuteAction)
     #rc = __ac.wait_for_server(timeout=rospy.Duration( TIMEOUT))
     rc = __ac.wait_for_server()
     if not rc:
         raise Exception("Timeout trying to connect to SMACH Executer server")
-    print "Successfully initiated ROS and actionlib client"
+    logger.debug("Successfully initiated ROS and actionlib client")
     return __ac
 
 class RobotImpl:
@@ -76,7 +82,7 @@ class RobotImpl:
       , "x": %s
       , "y": %s
       , "theta": 0.0
-      , "collision_aware": true      
+      , "collision_aware": true
     }
 }
 ''' % (x, y)
