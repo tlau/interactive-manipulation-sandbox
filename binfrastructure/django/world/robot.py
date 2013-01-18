@@ -33,7 +33,7 @@ class Robot:
         logger.info('action GO_TO_POSE invoked with pose=%s' % pose)
         # ...
 
-    def pick_up_bin(self, bin_id_list, **kwargs):
+    def pick_up_bin(self, bin_id_list=[], **kwargs):
         """
         params: { 'bin_id_list': (list of numbers) }
         """
@@ -42,14 +42,14 @@ class Robot:
                     % bin_id_list)
         # ...
 
-    def pick_up_bin_from_locations(self, binloc_id_list, **kwargs):
+    def pick_up_bin_from_locations(self, binloc_id_list=[], **kwargs):
         """
         params: { 'binloc_id_list': (list of numbers) }
         """
         logger.info('action PICK_UP_BIN_FROM_LOCATIONS invoked with'
                     ' binloc_id_list=%s' % binloc_id_list)
 
-    def drop_off_bin_at_locations(self, binloc_id_list, **kwargs):
+    def drop_off_bin_at_locations(self, binloc_id_list=[], **kwargs):
         """
         params: { 'binloc_id_list': (list of numbers) }
         """

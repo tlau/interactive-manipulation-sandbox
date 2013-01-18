@@ -95,7 +95,7 @@ function(
       for (param_key in this.parameters) {
         if (param_key == 'location') {
           // Build a one element array of bin location IDs.
-          ret.params.locations = [this.parameters[param_key].id];
+          ret.params.binloc_id_list = [this.parameters[param_key].id];
         } else {
           // Copy over the key-value pair.
           ret.params[param_key] = this.parameters[param_key]
