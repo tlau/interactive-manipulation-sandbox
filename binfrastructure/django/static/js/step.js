@@ -96,6 +96,9 @@ function(
         if (param_key == 'location') {
           // Build a one element array of bin location IDs.
           ret.params.locations = [this.parameters[param_key].id];
+        } else {
+          // Copy over the key-value pair.
+          ret.params[param_key] = this.parameters[param_key]
         }
       }
       return ret;
