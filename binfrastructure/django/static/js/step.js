@@ -1,14 +1,17 @@
 define([
   'ember',
-  'app'
+  'app',
+  'models/binlocation',
+  'jquery'
 ],
 function(
   Ember,
-  App
+  App,
+  Binlocation,
+  $
 ) {
 
   var Step = Ember.Object.extend({
-    title: null,
     type: null,
 
     // We have to initialize the parameters array inside of the constructor otherwise
@@ -19,11 +22,13 @@ function(
     },
 
     setParam: function(name, value) {
-      this.parameters[name] = value;
+      var newParams = $.extend({}, this.parameters);
+      newParams[name] = value;
+      this.set('parameters', newParams);
     },
 
     getParam: function(name) {
-      return this.parameters[name];
+      return this.get('parameters')[name];
     },
 
     type_to_API_mapping: {
@@ -34,26 +39,31 @@ function(
             'wait': 'wait'
             },
 
-    display_title: function() {
+    // Compute a title property for this step derived from this step's type and parameters
+    title: function() {
+      var ret;
       if (this.type === 'pickup') {
-        return 'Pick up from ' + this.display_location(this.getParam('location'));
+        ret = 'Pick up from ' + this.display_location(this.getParam('location'));
       } else if (this.type === 'dropoff') {
-        return 'Drop off at ' + this.display_location(this.getParam('location'));
+        ret = 'Drop off at ' + this.display_location(this.getParam('location'));
       } else if (this.type === 'goto') {
-        return 'Go to ' + this.display_pose(this.getParam('pose'));
+        ret = 'Go to ' + this.display_pose(this.getParam('pose'));
       } else if (this.type === 'speak') {
-        return 'Say "' + this.display_text(this.getParam('text')) + '"';
+        ret = 'Say "' + this.display_text(this.getParam('text')) + '"';
       } else if (this.type === 'wait') {
-        return 'Wait ' + this.display_duration(this.getParam('duration')) + ' ' + this.getParam('time_period');
+        ret = 'Wait ' + this.display_duration(this.getParam('duration')) + ' ' + this.getParam('time_period');
       }
-    },
+      return ret;
+    }.property('parameters'),
 
     display_location: function(loc) {
+      var ret = '???';
       if (loc) {
-        return loc.get('name');
-      } else {
-        return '???';
+        if (loc.get('name')) {
+          ret = loc.get('name');
+        }
       }
+      return ret;
     },
 
     display_text: function(text) {
@@ -89,6 +99,50 @@ function(
 
       return ret;
     },
+
+    serialize: function() {
+      var ret = {};
+      ret.type = this.type;
+      ret.params = {};
+      if (this.parameters.location) {
+        ret.params.location_id = this.parameters.location.id;
+      }
+      if (this.parameters.pose) {
+        ret.params.pose = this.parameters.pose;
+      }
+      if (this.parameters.text) {
+        ret.params.text = this.parameters.text;
+      }
+      if (this.parameters.duration) {
+        ret.params.duration = this.parameters.duration;
+      }
+      if (this.parameters.time_period) {
+        ret.params.time_period = this.parameters.time_period;
+      }
+      return ret;
+    },
+
+    deserialize: function(data) {
+      this.type = data.type;
+      var params = {};
+      if (data.params.location_id) {
+        params.location = Binlocation.find(data.params.location_id);
+      }
+      if (data.params.pose) {
+        params.pose = data.params.pose;
+      }
+      if (data.params.text) {
+        params.text = data.params.text;
+      }
+      if (data.params.duration) {
+        params.duration = data.params.duration;
+      }
+      if (data.params.time_period) {
+        params.time_period = data.params.time_period;
+      }
+
+      this.set('parameters', params);
+    }
   });
 
   return Step;

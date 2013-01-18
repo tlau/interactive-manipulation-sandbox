@@ -19,12 +19,12 @@ function(
     template: Ember.Handlebars.compile(programHtml),
 
     // Keeping track of the program and the program counter
-    program: new Array(),
+    program: [],
     selected_step: null,
 
-    // Soon this will be loaded from the database instead
+    // Load locations from the database
     locations: Binlocation.find(),
-    /*
+    /* Old list of made-up locations
     [
       { 'name': "Elvio's office" },
       { 'name': "Julian's office" },
@@ -36,22 +36,41 @@ function(
       { 'name': "the White Lab" }
     ],
     */
-    selected_location: null,
 
+    /* Placeholders for parameters selected from the UI */
+    selected_location: null,
     // Default time periods
     time_periods: [
       'seconds', 'minutes', 'hours'
     ],
     selected_time: null,
 
+    // Callback when the view is first created
     didInsertElement: function() {
-      // Doesn't work
-      // this.addObserver('program', this, 'drawProgram');
-
-      this.drawProgram();
+      // This is called when our view has been instantiated. It's effectively the onLoad.
+      
+      // Load from local storage if possible
+      /*
+      if (this.supports_html5_storage()) {
+        var program = localStorage.getItem('binfrastructure.program');
+        console.log("Loaded program:", program);
+        this.deserializeProgram(program);
+      }
+      */
     },
 
+    // Check whether browser suppotrs local storage
+    supports_html5_storage: function() {
+      try {
+        return 'localStorage' in window && window['localStorage'] !== null;
+      } catch (e) {
+        return false;
+      }
+    },
+
+    // Draw the program using d3
     drawProgram: function() {
+      console.log('drawing program', this.get('program'));
       var _this = this;
       var stepdiv = d3.select('.step_container');
       var steps = stepdiv.selectAll('.step')
@@ -61,9 +80,10 @@ function(
           .attr('class', 'step nonselectable')
           .on('click', function(d, i) { _this.selectStep(i); });
 
+      // D3: update each step when the program has changed
       steps
           .attr('index', function(d, i) { return i; })
-          .text(function(d) { return d.display_title(); })
+          .text(function(d) { return d.get('title'); })
           .attr('id', function(d, i) { return 'step' + i; })
           .append('span')
             .attr('class', 'deletebutton nonselectable')
@@ -75,7 +95,7 @@ function(
             });
 
         steps.exit().remove();
-    },
+    }.observes('program.@each.title'),
 
     /* ---------------------------------------------------------------------- */
     // Adding/deleting steps
@@ -83,25 +103,21 @@ function(
     deleteStep: function(index) {
       // Remove the step from the program
       var program = this.get('program');
-      program.splice(index, 1);
-      this.set('program', program);
+      program.removeAt(index);
 
       // Update selected step
       if ((this.get('selected_step') < 0) || (this.get('selected_step') >= this.get('program').length)) {
         this.set('selected_step', null);
       } 
-
-      // manually redraw the program; I can't get Ember observers to work
-      this.drawProgram();
     },
 
     addStep: function(newstep) {
       var program = this.get('program');
-      var index = program.push(newstep) - 1;
-      this.set('program', program);
+      console.log('adding step to program:', newstep);
+      program.pushObject(newstep);
+      // Step is always added to the end
+      var index = program.get('length') - 1;
 
-      // manually redraw the program; I can't get Ember observers to work
-      this.drawProgram();
       this.selectStep(index);
     },
 
@@ -112,7 +128,7 @@ function(
       $('.selected').removeClass('selected');
       $('#step' + index).addClass('selected');
 
-      var step = this.get('program')[index];
+      var step = this.get('program').objectAt(index);
       this.showPanel(step.type);
 
       // Wiring to update UI which Ember would have done for us
@@ -133,7 +149,6 @@ function(
 
       if (step.getParam('pose')) {
         this.set('map_xy', this.transformPoseToMap(step.getParam('pose')));
-        console.log('map_xy is:', this.get('map_xy'));
       }
     },
 
@@ -173,6 +188,7 @@ function(
         }));
     },
 
+    // Callback when user selects a location from the dropdown
     onLocationChange: function(evt) {
       if (!this.get('selected_location')) return;
 
@@ -183,8 +199,6 @@ function(
         console.log("Error: setting parameter location of unknown step!");
       }
 
-      // Refresh the program
-      this.drawProgram();
     }.observes('selected_location'),
 
     /* DROPOFF ---------------------------------------------------------------------- */
@@ -201,6 +215,7 @@ function(
         }));
     },
 
+    // Callback when users taps a place on the map to go to
     onSelectLocation: function(evt) {
       // Workaround for Firefox because it does not provide the offsetX/Y values
       if (typeof evt.offsetX === 'undefined' || typeof evt.offsetY === 'undefined') {
@@ -219,7 +234,6 @@ function(
         console.log("Error: setting parameter pose of unknown step!");
       }
 
-      this.drawProgram();
     },
 
     drawSelectedPointOnMap: function() {
@@ -259,7 +273,7 @@ function(
       }
 
       // Refresh the program
-      this.drawProgram();
+      //this.drawProgram();
     }.observes('text_to_speak'),
 
     /* WAIT ---------------------------------------------------------------------- */
@@ -283,12 +297,13 @@ function(
       }
 
       // Refresh the program
-      this.drawProgram();
+      //this.drawProgram();
     }.observes('selected_time'),
 
     onTimePeriodChange: function(evt) {
-      if (this.get('selected_time_period') && this.get('selected_step')) {
-        var step = this.get('program')[this.get('selected_step')];
+      if (this.get('selected_time_period') && (this.get('selected_step') !== null)) {
+        var step = this.get('program').objectAt(this.get('selected_step'));
+        console.log('that step is', step);
         if (step) {
           step.setParam('time_period', this.get('selected_time_period'));
         } else {
@@ -297,13 +312,12 @@ function(
       }
 
       // Refresh the program
-      this.drawProgram();
+      //this.drawProgram();
     }.observes('selected_time_period'),
 
     recharge: function(evt) {
       this.addStep(Step.create({
-        'title': 'Dock with charger',
-        'type':'recharge',
+        'type':'recharge'
         }));
     },
 
@@ -316,30 +330,71 @@ function(
       alert("Not implemented yet -- we're working on it!");
     },
 
-    saveProgram: function(evt) {
-      
-      var steps = this.get('program').map(function (d) { return d.toAPI(); });
+    serializeProgram: function(program) {
+      var steps = this.get('program').map(function (d) { return d.serialize(); });
       var ret = {
         'steps': steps,
         'name': 'My Program'
       };
-      var ret_json = JSON.stringify(ret);
-      console.log(ret_json);
+      return JSON.stringify(ret);
+    },
 
-      // Send ret to the middleware layer here
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', '/world/api/programs', true);
-      xhr.setRequestHeader('Content-type', 'application/json')
-      xhr.onreadystatechange = function() {
-        // Call this when the state changes
-        console.log("Server response:", xhr.responseText);
-        /*
-        if (xhr.readyState == 4 && xhr.status == 200) {
+    deserializeProgram: function(json) {
+      var program = this.get('program');
+//      this.set('program', program);
+      if (json === null) return;
+
+      var data = JSON.parse(json);
+      for (var i=0; i<data.steps.length; i++) {
+        var stepdata = data.steps[i];
+        var step = Step.create();
+        step.deserialize(stepdata);
+        program.pushObject(step);
+      }
+      console.log('setting new program from serialized version, should call drawProgram');
+//      this.set('program', program);
+//      console.log("Deserialized program:", this.get('program'));
+    },
+
+    /* Save program to local storage */
+    saveProgram: function(evt) {
+      this.drawProgram();
+      return;
+
+      if (!this.supports_html5_storage()) {
+        alert("Your browser does not support HTML5-based local storage, sorry!");
+        return;
+      }
+
+      var program = this.serializeProgram(this.get('program'));
+      localStorage.setItem('binfrastructure.program', program);
+      console.log('program saved');
+      
+      // Persist program to a server database, not used yet
+      if (false) {
+        var steps = this.get('program').map(function (d) { return d.toAPI(); });
+        var ret = {
+          'steps': steps,
+          'name': 'My Program'
+        };
+        var ret_json = JSON.stringify(ret);
+        console.log(ret_json);
+
+        // Send ret to the middleware layer here
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/world/api/programs', true);
+        xhr.setRequestHeader('Content-type', 'application/json')
+        xhr.onreadystatechange = function() {
+          // Call this when the state changes
           console.log("Server response:", xhr.responseText);
-        }
-        */
-      };
-      xhr.send(ret_json);
+          /*
+          if (xhr.readyState == 4 && xhr.status == 200) {
+            console.log("Server response:", xhr.responseText);
+          }
+          */
+        };
+        xhr.send(ret_json);
+      }
     },
 
     /* For converting map coords to a pose */
