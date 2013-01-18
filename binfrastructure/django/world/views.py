@@ -191,7 +191,7 @@ def run_program(request):
             try:
 
                 # ...Blocking call...
-                robot_api_call(params)
+                robot_api_call(**params)
 
             except (TypeError, ValueError) as e:
                 msg = ('API call "%s", bad parameters: %s'
