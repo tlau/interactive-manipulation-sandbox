@@ -194,7 +194,7 @@ def _init_node_params(argv, node_name):
 
 _init_node_args = None
 
-def init_node(name, argv=None, anonymous=False, log_level=None, disable_rostime=False, disable_rosout=False, disable_signals=False):
+def init_node(name, argv=None, anonymous=False, log_level=None, disable_rostime=False, disable_rosout=False, disable_signals=False, port=None):
     """
     Register client node with the master under the specified name.
     This MUST be called from the main Python thread unless
@@ -308,7 +308,7 @@ def init_node(name, argv=None, anonymous=False, log_level=None, disable_rostime=
     logger.info("init_node, name[%s], pid[%s]", resolved_node_name, os.getpid())
             
     # node initialization blocks until registration with master
-    node = rospy.impl.init.start_node(os.environ, resolved_node_name) 
+    node = rospy.impl.init.start_node(os.environ, resolved_node_name, port=port) 
     rospy.core.set_node_uri(node.uri)
     rospy.core.add_shutdown_hook(node.shutdown)    
     

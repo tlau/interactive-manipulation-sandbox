@@ -93,10 +93,12 @@ def start_node(environ, resolved_name, master_uri=None, port=None):
     _set_caller_id(resolved_name) 
 
     handler = ROSHandler(resolved_name, master_uri)
+    print "!!!!>>> PORT = %s" % port
     node = rosgraph.xmlrpc.XmlRpcNode(port, handler, on_run_error=_node_run_error)
     node.start()
     while not node.uri and not is_shutdown():
         time.sleep(0.00001) #poll for XMLRPC init
+    print "!!!!>>> URI (now) = %s" % node.uri
     logging.getLogger("rospy.init").info("ROS Slave URI: [%s]", node.uri)
 
     while not handler._is_registered() and not is_shutdown():

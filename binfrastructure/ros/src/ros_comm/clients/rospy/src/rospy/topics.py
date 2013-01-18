@@ -499,6 +499,7 @@ class Subscriber(Topic):
         @type  tcp_nodelay: bool
         @raise ROSException: if parameters are invalid
         """
+        print "Creating Subscriber for topic %s" % name
         super(Subscriber, self).__init__(name, data_class, Registration.SUB)
         #add in args that factory cannot pass in
 
@@ -760,6 +761,7 @@ class Publisher(Topic):
         @type  latch: bool
         @raise ROSException: if parameters are invalid     
         """
+        print "Creating Publisher for topic %s" % name
         super(Publisher, self).__init__(name, data_class, Registration.PUB)
 
         if subscriber_listener:

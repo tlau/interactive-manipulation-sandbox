@@ -66,6 +66,9 @@ from rospy.exceptions import ROSInternalException, TransportException, Transport
 from rospy.msg import deserialize_messages, serialize_message
 from rospy.service import ServiceException
 
+def logdebug( str):
+    print "!!! " + str
+
 from rospy.impl.transport import Transport, BIDIRECTIONAL
 
 logger = logging.getLogger('rospy.tcpros')
@@ -119,7 +122,7 @@ class TCPServer(object):
     ROS_IP/ROS_HOSTNAME environment variables
     """
 
-    def __init__(self, inbound_handler, port=0):
+    def __init__(self, inbound_handler, port=33333):
         """
         Setup a server socket listening on the specified port. If the
         port is omitted, will choose any open port.
@@ -130,6 +133,7 @@ class TCPServer(object):
         @type  port: int
         """
         self.port = port #will get overwritten if port=0
+        print "!!!!!! Parameterized port: %s" % port
         self.addr = None #set at socket bind
         self.is_shutdown = False
         self.inbound_handler = inbound_handler
@@ -154,6 +158,10 @@ class TCPServer(object):
         while not self.is_shutdown:
             try:
                 (client_sock, client_addr) = self.server_sock.accept()
+                try:
+                    print "!!!! got connection from %s in our port %s" % (client_addr, self.server_sock.getsockname()[1])
+                except:
+                    print "!!!! shutting down?"
             except socket.timeout:
                 continue
             except IOError as e:
@@ -170,7 +178,7 @@ class TCPServer(object):
                 if not self.is_shutdown:
                     traceback.print_exc()
                     logwarn("Failed to handle inbound connection due to socket error: %s"%e)
-        logdebug("TCPServer[%s] shutting down", self.port)
+        logdebug("TCPServer[%s] shutting down"% self.port)
 
     
     def get_full_addr(self):
@@ -218,13 +226,13 @@ def init_tcpros_server():
         rospy.core.add_shutdown_hook(_tcpros_server.shutdown)
     return _tcpros_server
     
-def start_tcpros_server():
+def start_tcpros_server(port=0):
     """
     start the TCPROS server if it has not started already
     """
     if _tcpros_server is None:
         init_tcpros_server()
-    return _tcpros_server.start_server()
+    return _tcpros_server.start_server(port)
 
 # provide an accessor of this so that the TCPROS Server is entirely hidden from upper layers
 

@@ -215,6 +215,8 @@ class ROSHandler(XmlRpcHandler):
         callback from ROSNode to inform handler of correct i/o information
         """
         _logger.info("_ready: %s", uri)
+        #import pdb
+        #pdb.set_trace()
         self.uri = uri
         #connect up topics in separate thread
         if self.reg_man:

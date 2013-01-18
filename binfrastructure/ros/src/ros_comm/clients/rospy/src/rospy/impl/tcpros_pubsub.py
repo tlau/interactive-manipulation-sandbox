@@ -288,7 +288,11 @@ class TCPROSHandler(rospy.impl.transport.ProtocolHandler):
         """
         if protocol[0] != TCPROS:
             return 0, "Internal error: protocol does not match TCPROS: %s"%protocol, []
-        start_tcpros_server()
+
+        # Set ROSTCP Server port to XMLRPC port + 1
+        tcpros_port = int(rospy.core.get_node_uri().split(":")[2][:-1]) + 1
+        start_tcpros_server(tcpros_port)
+
         addr, port = get_tcpros_server_address()
         return 1, "ready on %s:%s"%(addr, port), [TCPROS, addr, port]
 

@@ -25,7 +25,8 @@ from executer_actions.msg import ExecuteAction, ExecuteGoal
 NODE_NAME = 'rosbif'
 NODE_ID = '/rosbif'
 
-TIMEOUT = 5     # Timeout, in seconds for actionlib operations
+TIMEOUT = 20     # Timeout, in seconds for actionlib operations
+                 # I don't think this is respected by actionlib though ...
 
 _ros_ready = False
 __ac = None
@@ -43,13 +44,15 @@ def _init_ros():
         raise Exception("Unable to communicate with ROS master")
 
     # If everything looks OK, try initializing rospy, etc.
+    # rospy.init_node( NODE_NAME, anonymous=True, port=33336)
     rospy.init_node( NODE_NAME, anonymous=True)
     _ros_ready = True
 
     # Create an actionlib client and connect to server
     global __ac
     __ac = actionlib.SimpleActionClient('/executer/execute', ExecuteAction)
-    rc = __ac.wait_for_server(timeout=rospy.Duration( TIMEOUT))
+    #rc = __ac.wait_for_server(timeout=rospy.Duration( TIMEOUT))
+    rc = __ac.wait_for_server()
     if not rc:
         raise Exception("Timeout trying to connect to SMACH Executer server")
     print "Successfully initiated ROS and actionlib client"
@@ -89,11 +92,12 @@ class Robot:
         result = self._ac.get_result()
         return result
 
-
 if __name__ == '__main__':
     r = Robot()
     if r.ping():
         print "Ping 1: Success!"
     else:
         print "Ping 1: Failure"
+    rospy.sleep(1)
     print "Ping 2: %s" % r.ac_ping()
+    rospy.sleep(5)
