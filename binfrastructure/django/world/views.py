@@ -159,9 +159,8 @@ def run_program(request):
     try:
         # Create objects without save()'ing the to the database yet.
         bif_actions = [BIFAction.from_dict(step) for step in program['steps']]
-    except (TypeError, ValueError):
-        msg = ('API call "%s", bad parameters: %s'
-               % (fn_name, params))
+    except (TypeError, ValueError) as e:
+        msg = ('Failed to create a BIFAction from dict representation: %s' % e)
         logger.debug(msg)
         return Response({'detail': msg},
                         status=status.HTTP_400_BAD_REQUEST)
@@ -194,11 +193,11 @@ def run_program(request):
                 # ...Blocking call...
                 robot_api_call(params)
 
-            except (TypeError, ValueError):
+            except (TypeError, ValueError) as e:
                 msg = ('API call "%s", bad parameters: %s'
                        % (fn_name, params))
                 logger.debug(msg)
-                return Response({'detail': msg},
+                return Response({'detail': msg, 'exception': '%s' % e},
                                 status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 msg = ('API call "%s", exception: %s'
