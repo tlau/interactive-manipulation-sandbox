@@ -43,10 +43,16 @@ class Robot:
         # ...
 
     def pick_up_bin_from_locations(self, binloc_id_list):
+        """
+        params: { 'binloc_id_list': (list of numbers) }
+        """
         logger.info('action PICK_UP_BIN_FROM_LOCATIONS invoked with'
                     ' binloc_id_list=%s' % binloc_id_list)
 
-    def drop_off_bin_at_locations(binloc_id_list):
+    def drop_off_bin_at_locations(self, binloc_id_list):
+        """
+        params: { 'binloc_id_list': (list of numbers) }
+        """
         logger.info('action DROP_OFF_BIN_AT_LOCATIONS invoked with'
                     ' binloc_id_list=%s' % binloc_id_list)
 
