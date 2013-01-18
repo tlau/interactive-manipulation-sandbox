@@ -6,6 +6,15 @@ Vagrant::Config.run do |config|
 
   # Forward guest port to host port
   config.vm.forward_port 8100, 8100
+  config.vm.forward_port 33330, 33330
+  config.vm.forward_port 33331, 33331
+  config.vm.forward_port 33332, 33332
+  config.vm.forward_port 33333, 33333
+  config.vm.forward_port 33334, 33334
+  config.vm.forward_port 33335, 33335
+  config.vm.forward_port 33336, 33336
+  config.vm.forward_port 33337, 33337
+  config.vm.forward_port 33338, 33338
 
   # Change IP address for Vagrant host
   config.vm.customize ["modifyvm", :id, "--natnet1", "10.101.100/24"]
@@ -24,4 +33,3 @@ Vagrant::Config.run do |config|
     ansible.hosts = "webservers"
   end
 end
-
