@@ -39,13 +39,13 @@ function(
             'wait': 'wait'
             },
 
-    // Compute a title property for this step derived from this step's type and parameters
-    title: function() {
+    // Calculate a title property for this step derived from this step's type and parameters
+    get_title: function() {
       var ret;
       if (this.type === 'pickup') {
-        ret = 'Pick up from ' + this.display_location(this.getParam('location'));
+        ret = 'Pick up from ' + this.display_location();
       } else if (this.type === 'dropoff') {
-        ret = 'Drop off at ' + this.display_location(this.getParam('location'));
+        ret = 'Drop off at ' + this.display_location();
       } else if (this.type === 'goto') {
         ret = 'Go to ' + this.display_pose(this.getParam('pose'));
       } else if (this.type === 'speak') {
@@ -53,11 +53,13 @@ function(
       } else if (this.type === 'wait') {
         ret = 'Wait ' + this.display_duration(this.getParam('duration')) + ' ' + this.getParam('time_period');
       }
+//      console.log('### computed title:', ret);
       return ret;
-    }.property('parameters'),
+    },
 
-    display_location: function(loc) {
+    display_location: function() {
       var ret = '???';
+      var loc = this.getParam('location');
       if (loc) {
         if (loc.get('name')) {
           ret = loc.get('name');
@@ -125,6 +127,7 @@ function(
     deserialize: function(data) {
       this.type = data.type;
       var params = {};
+
       if (data.params.location_id) {
         params.location = Binlocation.find(data.params.location_id);
       }

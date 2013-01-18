@@ -52,7 +52,6 @@ function(
       // Load from local storage if possible
       if (this.supports_html5_storage()) {
         var program = localStorage.getItem('binfrastructure.program');
-        console.log("Loaded program:", program);
         this.deserializeProgram(program);
       }
     },
@@ -68,9 +67,10 @@ function(
 
     // Draw the program using d3
     drawProgram: function() {
-      console.log('drawing program', this.get('program'));
+//      console.log('drawing program', this.get('program'));
       var _this = this;
       var stepdiv = d3.select('.step_container');
+
       var steps = stepdiv.selectAll('.step')
         .data(this.get('program'));
 
@@ -78,10 +78,9 @@ function(
           .attr('class', 'step nonselectable')
           .on('click', function(d, i) { _this.selectStep(i); });
 
-      // D3: update each step when the program has changed
       steps
           .attr('index', function(d, i) { return i; })
-          .text(function(d) { return d.get('title'); })
+          .text(function(d) { return d.get_title(); })
           .attr('id', function(d, i) { return 'step' + i; })
           .append('span')
             .attr('class', 'deletebutton nonselectable')
@@ -93,7 +92,9 @@ function(
             });
 
         steps.exit().remove();
-    }.observes('program.@each.title'),
+    // We observe locations.name because that is needed to render step titles on program deserialization
+    // We observe step parameters so that changes to parameters while editing a step show up immediately
+    }.observes('locations.@each.name', 'program.@each.parameters'),
 
     /* ---------------------------------------------------------------------- */
     // Adding/deleting steps
