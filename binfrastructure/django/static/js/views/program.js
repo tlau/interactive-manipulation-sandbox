@@ -270,6 +270,7 @@ function(
         'type':'wait',
         });
       step.setParam('time_period', 'seconds');
+      step.setParam('seconds', num);
       this.addStep(step);
     },
 
@@ -331,7 +332,7 @@ function(
           if (xhr.responseText) {
             alert(xhr.responseText);
           } else {
-            alert("Program appears to have run ok...");
+            alert("Program finished successfully.");
           }
         }
       };
