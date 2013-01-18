@@ -1,0 +1,5 @@
+*~
+*.pyc
+*.swp
+django/server.db
+django/server/local_settings.py

@@ -2,7 +2,7 @@
 Implement the API calls to effect the robot.
 """
 import logging
-from rosbif.impl import RobotImpl
+import rosbif.impl
 
 logger = logging.getLogger('robot')
 
@@ -10,7 +10,27 @@ logger = logging.getLogger('robot')
 class Robot:
 
     def __init__(self):
-        self._impl = RobotImpl()
+        logger.debug("Initializing the robot proxy.")
+        self._impl = rosbif.impl.RobotImpl()
+
+        # # TO NOTE:
+        #
+        # # This is interesting... uncommenting this few lines (calling the
+        # # "ac_ping" method) makes UI the GETs to /world/api/binlocations fail
+        # # _each_ time, instead of just the first time. It'll also fail in
+        # # individual location queries, which indicates it'll 500 every
+        # # request.
+        #
+        # logger.debug("AC_PINGING THE RobotImple
+        # instance...")  r = self._impl.ac_ping() logger.debug("RESULT OF
+        # AC_PING: %s" % r)
+        #
+        # # If this next few lines are uncommented, however, the behavior does
+        # # not change (the ping() does return).
+        #
+        # logger.debug("PINGING THE RobotImple instance...")
+        # r = self._impl.ping()
+        # logger.debug("RESULT OF PING: %s" % r)
 
     def speak(self, text='', **kwargs):
         """
