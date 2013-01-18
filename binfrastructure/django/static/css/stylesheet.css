@@ -565,6 +565,7 @@ a {
 	font-size: 12pt;
 }
 
+/* Drawing the user's selected location on the map */
 .mappoint {
     fill: #00ff00;
     stroke: black;
