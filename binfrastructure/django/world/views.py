@@ -139,43 +139,80 @@ def programs(request, format=None):
 def run_program(request):
     """Run the program POSTed, without saving it."""
 
+    # NOTE 1:
     # Trust that the POSTed program is valid.
 
     program = request.DATA
     logger.info('Excuting program "%s".' % program['name'])
 
-    for step in program['steps']:
-        fn_name = step['action']
-        if fn_name not in API_names:
-            msg = ('Bad API call (%s) from program "%s".'
-                   % (fn_name, program['name']))
-            logger.debug(msg)
-            return Response({'detail': msg},
-                            status=status.HTTP_400_BAD_REQUEST)
+    # NOTE 2:
+    # In order to test the model-related code, the program POSTed is persisted
+    # (along with all its steps) before being run, and immediatly after the
+    # execution finished (whether successful or not), the program (and its
+    # steps) is deleted.
+    #
+    # To acomplish this, the POSTed data is first passed to the models
+    # (converting from its 'dict' representation), then from the models to the
+    # robot_api_call() (converting to its 'dict' representation). Silly thing.
 
-        robot_api_call = getattr(robot, fn_name)
-        params = step['params']
+    # Convert dict repr's into BIFAction instances.
+    try:
+        # Create objects without save()'ing the to the database yet.
+        bif_actions = [BIFAction.from_dict(step) for step in program['steps']]
+    except (TypeError, ValueError):
+        msg = ('API call "%s", bad parameters: %s'
+               % (fn_name, params))
+        logger.debug(msg)
+        return Response({'detail': msg},
+                        status=status.HTTP_400_BAD_REQUEST)
+    # The following code creates the (temporary) database entities.
+    bif_program = BIFProgram(name=program['name'])
+    bif_program.save()
+    bif_program.replace_step_sequence(bif_actions)
 
-        try:
+    # Convert BIFAction instances into dict repr's.
+    steps = [action.to_dict() for action in bif_actions]
 
-            # ...Blocking call...
-            robot_api_call(params)
+    try:
 
-        except (TypeError, ValueError):
-            msg = ('API call "%s", bad parameters: %s'
-                   % (fn_name, params))
-            logger.debug(msg)
-            return Response({'detail': msg},
-                            status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            msg = ('API call "%s", exception: %s'
-                   % (fn_name, e))
-            logger.debug(msg)
-            return Response({'detail': msg},
-                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        finally:
-            # Run clean up on the robot.
-            pass
+        for step in steps:
+            # Pick on the dict repr of the step, to produce the API call.
+
+            fn_name = step['action']
+            if fn_name not in API_names:
+                msg = ('Bad API call (%s) from program "%s".'
+                       % (fn_name, program['name']))
+                logger.debug(msg)
+                return Response({'detail': msg},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+            robot_api_call = getattr(robot, fn_name)
+            params = step['params']
+
+            try:
+
+                # ...Blocking call...
+                robot_api_call(params)
+
+            except (TypeError, ValueError):
+                msg = ('API call "%s", bad parameters: %s'
+                       % (fn_name, params))
+                logger.debug(msg)
+                return Response({'detail': msg},
+                                status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                msg = ('API call "%s", exception: %s'
+                       % (fn_name, e))
+                logger.debug(msg)
+                return Response({'detail': msg},
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            finally:
+                # Run clean up on the robot.
+                pass
+    finally:
+        # Clean up the temporary database entities.
+        bif_program.delete()  # mean cascade kills all actions.
+
     return Response(status=status.HTTP_200_OK)
 
 
