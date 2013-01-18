@@ -2,7 +2,7 @@
 Implement the API calls to effect the robot.
 """
 import logging
-
+from rosbif.impl import RobotImpl
 
 logger = logging.getLogger('robot')
 
@@ -10,7 +10,7 @@ logger = logging.getLogger('robot')
 class Robot:
 
     def __init__(self):
-        pass
+        self._impl = RobotImpl()
 
     def speak(self, text=''):
         """
@@ -31,7 +31,7 @@ class Robot:
         params: { 'pose': {'x': (number), 'y': (number), 'angle': (number)} }
         """
         logger.info('action GO_TO_POSE invoked with pose=%s' % pose_dict)
-        # ...
+        self.impl.navigate_to_pose( pose_dict['x'], pose_dict['y'])
 
     def pick_up_bin(self, bin_id_list):
         """

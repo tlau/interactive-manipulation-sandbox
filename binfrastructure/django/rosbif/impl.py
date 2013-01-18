@@ -58,13 +58,36 @@ def _init_ros():
     print "Successfully initiated ROS and actionlib client"
     return __ac
 
-class Robot:
+class RobotImpl:
     def __init__(self):
         '''Perform ROS initializetion'''
         self._ac = _init_ros()
 
     def navigate_to_pose(self, x, y):
         '''Navigates the robot to a given position in the map'''
+        goal = ExecuteGoal()
+        goal.action = '''
+{
+    "type": "action"
+  , "name": "NavigateToPose"
+  , "inputs":
+    {
+        "frame_id": "/map"
+      , "x": %s
+      , "y": %s
+      , "theta": 0.0
+      , "collision_aware": true      
+    }
+}
+''' % (x, y)
+
+        self._ac.send_goal(goal)
+        finished = self._ac.wait_for_result(rospy.Duration(TIMEOUT))
+        if not finished:
+            raise Exception("Timeout waiting for actionlib navigate_to_pose action")
+
+        result = self._ac.get_result()
+        return result
 
     def ping(self):
         '''
@@ -93,7 +116,7 @@ class Robot:
         return result
 
 if __name__ == '__main__':
-    r = Robot()
+    r = RobotImpl()
     if r.ping():
         print "Ping 1: Success!"
     else:
