@@ -31,7 +31,7 @@ class Robot:
         params: { 'pose': {'x': (number), 'y': (number), 'angle': (number)} }
         """
         logger.info('action GO_TO_POSE invoked with pose=%s' % pose)
-        self.impl.navigate_to_pose(pose['x'], pose['y'])
+        self._impl.navigate_to_pose(pose['x'], pose['y'])
 
     def pick_up_bin(self, bin_id_list=[], **kwargs):
         """
