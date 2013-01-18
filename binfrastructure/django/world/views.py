@@ -135,18 +135,19 @@ def programs(request, format=None):
 # 8. Pop the champagne.
 
 @api_view(['POST'])
+@parser_classes([JSONParser])
 def run_program(request):
     """Run the program POSTed, without saving it."""
 
     # Trust that the POSTed program is valid.
 
     program = request.DATA
-    logger.info("Excuting program %s." % program['name'])
+    logger.info('Excuting program "%s".' % program['name'])
 
     for step in program['steps']:
         fn_name = step['action']
         if fn_name not in API_names:
-            msg = ('Bad API call (%s) from program %s.'
+            msg = ('Bad API call (%s) from program "%s".'
                    % (fn_name, program['name']))
             logger.debug(msg)
             return Response({'detail': msg},
@@ -154,19 +155,20 @@ def run_program(request):
 
         robot_api_call = getattr(robot, fn_name)
         params = step['params']
+
         try:
 
             # ...Blocking call...
             robot_api_call(params)
 
         except (TypeError, ValueError):
-            msg = ('API call %s, bad parameters: %s'
+            msg = ('API call "%s", bad parameters: %s'
                    % (fn_name, params))
             logger.debug(msg)
             return Response({'detail': msg},
                             status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            msg = ('API call %s, exception: %s'
+            msg = ('API call "%s", exception: %s'
                    % (fn_name, e))
             logger.debug(msg)
             return Response({'detail': msg},
@@ -178,6 +180,7 @@ def run_program(request):
 
 
 @api_view(['POST'])
+@parser_classes([JSONParser])
 def run_step(request):
     """Run the step POSTed alone, without saving it."""
 
