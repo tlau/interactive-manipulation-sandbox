@@ -75,7 +75,7 @@ function(
         return '???';
       }
     },
-    
+
     display_duration: function(duration) {
       if (duration) {
         return duration;
@@ -94,11 +94,25 @@ function(
 
     // Return a javascript object that will be serialized as JSON and sent to the midtier
     toAPI: function() {
+      // NOTE: the views/program.js code uses 'location' in spite of the fact
+      // that the API operate on lists of locations. The current implementation
+      // of this method discards the list-related possibilities.
+
       var ret = {
         'action': this.type_to_API_mapping[this.type],
-        'params': this.parameters
+        'params': {}
       };
 
+      // Build the the 'params' object expected by the API.
+      for (param_key in this.parameters) {
+        if (param_key == 'location') {
+          // Build a one element array of bin location IDs.
+          ret.params.binloc_id_list = [this.parameters[param_key].id];
+        } else {
+          // Copy over the key-value pair.
+          ret.params[param_key] = this.parameters[param_key]
+        }
+      }
       return ret;
     },
 
@@ -150,4 +164,3 @@ function(
 
   return Step;
 });
-

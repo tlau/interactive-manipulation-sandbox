@@ -175,7 +175,7 @@ function(
       this.set('text_to_speak', null);
       this.set('map_xy', null);
     },
-  
+
     /* ---------------------------------------------------------------------- */
     // Specific actions
 
@@ -281,6 +281,7 @@ function(
         'type':'wait',
         });
       step.setParam('time_period', 'seconds');
+      step.setParam('seconds', num);
       this.addStep(step);
     },
 
@@ -306,7 +307,7 @@ function(
         } else {
           console.log("Error: setting parameter period of unknown step!");
         }
-      }
+      };
 
       // Refresh the program
       //this.drawProgram();
@@ -321,10 +322,31 @@ function(
     /* ---------------------------------------------------------------------- */
     // Program execution and saving
     runProgram: function(evt) {
-      var ret = JSON.stringify(this.get('program').map(function (d) { return d.toAPI(); }));
-      // Send ret to the middleware layer here
-      console.log(ret);
-      alert("Not implemented yet -- we're working on it!");
+      var program = {name: ''},
+          brick = '';
+
+      program.name = ''; // Inmediate execution of an anonymous program.
+      program.steps = this.get('program').map(function (d) { return d.toAPI(); });
+      // Compile the pretty flower into an ugly brick.
+      brick = JSON.stringify(program);
+
+      // Send the brick to the middleware layer here
+      console.log(brick);
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/world/api/run/program', true);
+      xhr.setRequestHeader('Content-type', 'application/json');
+      xhr.onreadystatechange = function() {
+        // Call this when the state changes
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          console.log("Server response:", xhr.responseText);
+          if (xhr.responseText) {
+            alert(xhr.responseText);
+          } else {
+            alert("Program finished successfully.");
+          }
+        }
+      };
+      xhr.send(brick);
     },
 
     serializeProgram: function(program) {

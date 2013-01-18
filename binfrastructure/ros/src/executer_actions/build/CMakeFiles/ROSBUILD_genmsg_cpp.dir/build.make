@@ -58,7 +58,7 @@ CMakeFiles/ROSBUILD_genmsg_cpp: ../msg_gen/cpp/include/executer_actions/ExecuteR
 CMakeFiles/ROSBUILD_genmsg_cpp: ../msg_gen/cpp/include/executer_actions/ExecuteFeedback.h
 
 ../msg_gen/cpp/include/executer_actions/ExecuteAction.h: ../msg/ExecuteAction.msg
-../msg_gen/cpp/include/executer_actions/ExecuteAction.h: /opt/ros/groovy/share/roscpp/rosbuild/scripts/genmsg_cpp.py
+../msg_gen/cpp/include/executer_actions/ExecuteAction.h: /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/ros_comm/clients/roscpp/rosbuild/scripts/genmsg_cpp.py
 ../msg_gen/cpp/include/executer_actions/ExecuteAction.h: /opt/ros/groovy/lib/roslib/gendeps
 ../msg_gen/cpp/include/executer_actions/ExecuteAction.h: /opt/ros/groovy/share/actionlib_msgs/msg/GoalID.msg
 ../msg_gen/cpp/include/executer_actions/ExecuteAction.h: ../msg/ExecuteResult.msg
@@ -84,10 +84,10 @@ CMakeFiles/ROSBUILD_genmsg_cpp: ../msg_gen/cpp/include/executer_actions/ExecuteF
 ../msg_gen/cpp/include/executer_actions/ExecuteAction.h: /opt/ros/groovy/share/actionlib_msgs/package.xml
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/executer_actions/build/CMakeFiles $(CMAKE_PROGRESS_1)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold "Generating ../msg_gen/cpp/include/executer_actions/ExecuteAction.h"
-	/opt/ros/groovy/share/roscpp/rosbuild/scripts/genmsg_cpp.py /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/executer_actions/msg/ExecuteAction.msg
+	/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/ros_comm/clients/roscpp/rosbuild/scripts/genmsg_cpp.py /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/executer_actions/msg/ExecuteAction.msg
 
 ../msg_gen/cpp/include/executer_actions/ExecuteGoal.h: ../msg/ExecuteGoal.msg
-../msg_gen/cpp/include/executer_actions/ExecuteGoal.h: /opt/ros/groovy/share/roscpp/rosbuild/scripts/genmsg_cpp.py
+../msg_gen/cpp/include/executer_actions/ExecuteGoal.h: /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/ros_comm/clients/roscpp/rosbuild/scripts/genmsg_cpp.py
 ../msg_gen/cpp/include/executer_actions/ExecuteGoal.h: /opt/ros/groovy/lib/roslib/gendeps
 ../msg_gen/cpp/include/executer_actions/ExecuteGoal.h: ../manifest.xml
 ../msg_gen/cpp/include/executer_actions/ExecuteGoal.h: /opt/ros/groovy/share/genmsg/package.xml
@@ -104,10 +104,10 @@ CMakeFiles/ROSBUILD_genmsg_cpp: ../msg_gen/cpp/include/executer_actions/ExecuteF
 ../msg_gen/cpp/include/executer_actions/ExecuteGoal.h: /opt/ros/groovy/share/actionlib_msgs/package.xml
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/executer_actions/build/CMakeFiles $(CMAKE_PROGRESS_2)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold "Generating ../msg_gen/cpp/include/executer_actions/ExecuteGoal.h"
-	/opt/ros/groovy/share/roscpp/rosbuild/scripts/genmsg_cpp.py /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/executer_actions/msg/ExecuteGoal.msg
+	/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/ros_comm/clients/roscpp/rosbuild/scripts/genmsg_cpp.py /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/executer_actions/msg/ExecuteGoal.msg
 
 ../msg_gen/cpp/include/executer_actions/ExecuteActionGoal.h: ../msg/ExecuteActionGoal.msg
-../msg_gen/cpp/include/executer_actions/ExecuteActionGoal.h: /opt/ros/groovy/share/roscpp/rosbuild/scripts/genmsg_cpp.py
+../msg_gen/cpp/include/executer_actions/ExecuteActionGoal.h: /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/ros_comm/clients/roscpp/rosbuild/scripts/genmsg_cpp.py
 ../msg_gen/cpp/include/executer_actions/ExecuteActionGoal.h: /opt/ros/groovy/lib/roslib/gendeps
 ../msg_gen/cpp/include/executer_actions/ExecuteActionGoal.h: /opt/ros/groovy/share/actionlib_msgs/msg/GoalID.msg
 ../msg_gen/cpp/include/executer_actions/ExecuteActionGoal.h: ../msg/ExecuteGoal.msg
@@ -127,10 +127,10 @@ CMakeFiles/ROSBUILD_genmsg_cpp: ../msg_gen/cpp/include/executer_actions/ExecuteF
 ../msg_gen/cpp/include/executer_actions/ExecuteActionGoal.h: /opt/ros/groovy/share/actionlib_msgs/package.xml
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/executer_actions/build/CMakeFiles $(CMAKE_PROGRESS_3)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold "Generating ../msg_gen/cpp/include/executer_actions/ExecuteActionGoal.h"
-	/opt/ros/groovy/share/roscpp/rosbuild/scripts/genmsg_cpp.py /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/executer_actions/msg/ExecuteActionGoal.msg
+	/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/ros_comm/clients/roscpp/rosbuild/scripts/genmsg_cpp.py /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/executer_actions/msg/ExecuteActionGoal.msg
 
 ../msg_gen/cpp/include/executer_actions/ExecuteResult.h: ../msg/ExecuteResult.msg
-../msg_gen/cpp/include/executer_actions/ExecuteResult.h: /opt/ros/groovy/share/roscpp/rosbuild/scripts/genmsg_cpp.py
+../msg_gen/cpp/include/executer_actions/ExecuteResult.h: /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/ros_comm/clients/roscpp/rosbuild/scripts/genmsg_cpp.py
 ../msg_gen/cpp/include/executer_actions/ExecuteResult.h: /opt/ros/groovy/lib/roslib/gendeps
 ../msg_gen/cpp/include/executer_actions/ExecuteResult.h: ../manifest.xml
 ../msg_gen/cpp/include/executer_actions/ExecuteResult.h: /opt/ros/groovy/share/genmsg/package.xml
@@ -147,10 +147,10 @@ CMakeFiles/ROSBUILD_genmsg_cpp: ../msg_gen/cpp/include/executer_actions/ExecuteF
 ../msg_gen/cpp/include/executer_actions/ExecuteResult.h: /opt/ros/groovy/share/actionlib_msgs/package.xml
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/executer_actions/build/CMakeFiles $(CMAKE_PROGRESS_4)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold "Generating ../msg_gen/cpp/include/executer_actions/ExecuteResult.h"
-	/opt/ros/groovy/share/roscpp/rosbuild/scripts/genmsg_cpp.py /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/executer_actions/msg/ExecuteResult.msg
+	/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/ros_comm/clients/roscpp/rosbuild/scripts/genmsg_cpp.py /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/executer_actions/msg/ExecuteResult.msg
 
 ../msg_gen/cpp/include/executer_actions/ExecuteActionResult.h: ../msg/ExecuteActionResult.msg
-../msg_gen/cpp/include/executer_actions/ExecuteActionResult.h: /opt/ros/groovy/share/roscpp/rosbuild/scripts/genmsg_cpp.py
+../msg_gen/cpp/include/executer_actions/ExecuteActionResult.h: /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/ros_comm/clients/roscpp/rosbuild/scripts/genmsg_cpp.py
 ../msg_gen/cpp/include/executer_actions/ExecuteActionResult.h: /opt/ros/groovy/lib/roslib/gendeps
 ../msg_gen/cpp/include/executer_actions/ExecuteActionResult.h: /opt/ros/groovy/share/actionlib_msgs/msg/GoalID.msg
 ../msg_gen/cpp/include/executer_actions/ExecuteActionResult.h: ../msg/ExecuteResult.msg
@@ -171,10 +171,10 @@ CMakeFiles/ROSBUILD_genmsg_cpp: ../msg_gen/cpp/include/executer_actions/ExecuteF
 ../msg_gen/cpp/include/executer_actions/ExecuteActionResult.h: /opt/ros/groovy/share/actionlib_msgs/package.xml
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/executer_actions/build/CMakeFiles $(CMAKE_PROGRESS_5)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold "Generating ../msg_gen/cpp/include/executer_actions/ExecuteActionResult.h"
-	/opt/ros/groovy/share/roscpp/rosbuild/scripts/genmsg_cpp.py /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/executer_actions/msg/ExecuteActionResult.msg
+	/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/ros_comm/clients/roscpp/rosbuild/scripts/genmsg_cpp.py /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/executer_actions/msg/ExecuteActionResult.msg
 
 ../msg_gen/cpp/include/executer_actions/ExecuteFeedback.h: ../msg/ExecuteFeedback.msg
-../msg_gen/cpp/include/executer_actions/ExecuteFeedback.h: /opt/ros/groovy/share/roscpp/rosbuild/scripts/genmsg_cpp.py
+../msg_gen/cpp/include/executer_actions/ExecuteFeedback.h: /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/ros_comm/clients/roscpp/rosbuild/scripts/genmsg_cpp.py
 ../msg_gen/cpp/include/executer_actions/ExecuteFeedback.h: /opt/ros/groovy/lib/roslib/gendeps
 ../msg_gen/cpp/include/executer_actions/ExecuteFeedback.h: ../manifest.xml
 ../msg_gen/cpp/include/executer_actions/ExecuteFeedback.h: /opt/ros/groovy/share/genmsg/package.xml
@@ -191,10 +191,10 @@ CMakeFiles/ROSBUILD_genmsg_cpp: ../msg_gen/cpp/include/executer_actions/ExecuteF
 ../msg_gen/cpp/include/executer_actions/ExecuteFeedback.h: /opt/ros/groovy/share/actionlib_msgs/package.xml
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/executer_actions/build/CMakeFiles $(CMAKE_PROGRESS_6)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold "Generating ../msg_gen/cpp/include/executer_actions/ExecuteFeedback.h"
-	/opt/ros/groovy/share/roscpp/rosbuild/scripts/genmsg_cpp.py /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/executer_actions/msg/ExecuteFeedback.msg
+	/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/ros_comm/clients/roscpp/rosbuild/scripts/genmsg_cpp.py /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/executer_actions/msg/ExecuteFeedback.msg
 
 ../msg_gen/cpp/include/executer_actions/ExecuteActionFeedback.h: ../msg/ExecuteActionFeedback.msg
-../msg_gen/cpp/include/executer_actions/ExecuteActionFeedback.h: /opt/ros/groovy/share/roscpp/rosbuild/scripts/genmsg_cpp.py
+../msg_gen/cpp/include/executer_actions/ExecuteActionFeedback.h: /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/ros_comm/clients/roscpp/rosbuild/scripts/genmsg_cpp.py
 ../msg_gen/cpp/include/executer_actions/ExecuteActionFeedback.h: /opt/ros/groovy/lib/roslib/gendeps
 ../msg_gen/cpp/include/executer_actions/ExecuteActionFeedback.h: /opt/ros/groovy/share/actionlib_msgs/msg/GoalID.msg
 ../msg_gen/cpp/include/executer_actions/ExecuteActionFeedback.h: ../msg/ExecuteFeedback.msg
@@ -215,7 +215,7 @@ CMakeFiles/ROSBUILD_genmsg_cpp: ../msg_gen/cpp/include/executer_actions/ExecuteF
 ../msg_gen/cpp/include/executer_actions/ExecuteActionFeedback.h: /opt/ros/groovy/share/actionlib_msgs/package.xml
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/executer_actions/build/CMakeFiles $(CMAKE_PROGRESS_7)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold "Generating ../msg_gen/cpp/include/executer_actions/ExecuteActionFeedback.h"
-	/opt/ros/groovy/share/roscpp/rosbuild/scripts/genmsg_cpp.py /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/executer_actions/msg/ExecuteActionFeedback.msg
+	/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/ros_comm/clients/roscpp/rosbuild/scripts/genmsg_cpp.py /home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/executer_actions/msg/ExecuteActionFeedback.msg
 
 ../msg/ExecuteAction.msg: ../action/Execute.action
 ../msg/ExecuteAction.msg: /opt/ros/groovy/lib/actionlib_msgs/genaction.py

@@ -1,0 +1,9 @@
+---
+
+- name: deploy in babylon1 as user bif
+  hosts: webservers
+  user: bif
+  sudo: True
+
+  tasks:
+    - include: dependencies.yml 

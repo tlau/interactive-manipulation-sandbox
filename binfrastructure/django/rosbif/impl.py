@@ -2,6 +2,10 @@
 This class implements access to the ROS functions necessary to actually have impact on the robots. The rest
 of the components in the Web application will access the robot through this interface.
 '''
+# HACK: Prepend rospy-from-source location in python path while we work with hacked rospy
+import os, sys
+ROSPY_SRC='/'.join(os.path.abspath(__file__).split('/')[:-3]) + '/ros/src/ros_comm/clients/rospy/src'
+sys.path.insert(0,ROSPY_SRC)
 
 # Fail to initialize if the ROS environment is not set-up
 import os
@@ -11,6 +15,7 @@ if not ROS_MASTER_URI:
 else:
     print "Using ROS_MASTER_URI = %s" % ROS_MASTER_URI
 
+import rospy
 import rosgraph
 import rosnode
 import actionlib
@@ -20,7 +25,8 @@ from executer_actions.msg import ExecuteAction, ExecuteGoal
 NODE_NAME = 'rosbif'
 NODE_ID = '/rosbif'
 
-TIMEOUT = 5     # Timeout, in seconds for actionlib operations
+TIMEOUT = 20     # Timeout, in seconds for actionlib operations
+                 # I don't think this is respected by actionlib though ...
 
 _ros_ready = False
 __ac = None
@@ -37,27 +43,51 @@ def _init_ros():
     except:
         raise Exception("Unable to communicate with ROS master")
 
-    # If everything looks OK, try importing rospy, etc.
-    import rospy; globals()['rospy'] = rospy
+    # If everything looks OK, try initializing rospy, etc.
+    # rospy.init_node( NODE_NAME, anonymous=True, port=33336)
     rospy.init_node( NODE_NAME, anonymous=True)
     _ros_ready = True
 
     # Create an actionlib client and connect to server
     global __ac
     __ac = actionlib.SimpleActionClient('/executer/execute', ExecuteAction)
-    rc = __ac.wait_for_server(timeout=rospy.Duration( TIMEOUT))
+    #rc = __ac.wait_for_server(timeout=rospy.Duration( TIMEOUT))
+    rc = __ac.wait_for_server()
     if not rc:
         raise Exception("Timeout trying to connect to SMACH Executer server")
     print "Successfully initiated ROS and actionlib client"
     return __ac
 
-class Robot:
+class RobotImpl:
     def __init__(self):
         '''Perform ROS initializetion'''
         self._ac = _init_ros()
 
     def navigate_to_pose(self, x, y):
         '''Navigates the robot to a given position in the map'''
+        goal = ExecuteGoal()
+        goal.action = '''
+{
+    "type": "action"
+  , "name": "NavigateToPose"
+  , "inputs":
+    {
+        "frame_id": "/map"
+      , "x": %s
+      , "y": %s
+      , "theta": 0.0
+      , "collision_aware": true      
+    }
+}
+''' % (x, y)
+
+        self._ac.send_goal(goal)
+        finished = self._ac.wait_for_result(rospy.Duration(TIMEOUT))
+        if not finished:
+            raise Exception("Timeout waiting for actionlib navigate_to_pose action")
+
+        result = self._ac.get_result()
+        return result
 
     def ping(self):
         '''
@@ -85,11 +115,12 @@ class Robot:
         result = self._ac.get_result()
         return result
 
-
 if __name__ == '__main__':
-    r = Robot()
+    r = RobotImpl()
     if r.ping():
         print "Ping 1: Success!"
     else:
         print "Ping 1: Failure"
+    rospy.sleep(1)
     print "Ping 2: %s" % r.ac_ping()
+    rospy.sleep(5)
