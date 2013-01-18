@@ -89,7 +89,7 @@ function(
       // Update selected step
       if ((this.get('selected_step') < 0) || (this.get('selected_step') >= this.get('program').length)) {
         this.set('selected_step', null);
-      } 
+      }
 
       // manually redraw the program; I can't get Ember observers to work
       this.drawProgram();
@@ -162,7 +162,7 @@ function(
       this.set('text_to_speak', null);
       this.set('map_xy', null);
     },
-  
+
     /* ---------------------------------------------------------------------- */
     // Specific actions
 
@@ -295,7 +295,7 @@ function(
         } else {
           console.log("Error: setting parameter of unknown step!");
         }
-      }
+      };
 
       // Refresh the program
       this.drawProgram();
@@ -311,14 +311,35 @@ function(
     /* ---------------------------------------------------------------------- */
     // Program execution and saving
     runProgram: function(evt) {
-      var ret = JSON.stringify(this.get('program').map(function (d) { return d.toAPI(); }));
-      // Send ret to the middleware layer here
-      console.log(ret);
-      alert("Sorry, not implemented yet!");
+      var program = {name: ''},
+          brick = '';
+
+      program.name = ''; // Inmediate execution of an anonymous program.
+      program.steps = this.get('program').map(function (d) { return d.toAPI(); });
+      // Compile the pretty flower into an ugly brick.
+      brick = JSON.stringify(program);
+
+      // Send the brick to the middleware layer here
+      console.log(brick);
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/world/api/run/program', true);
+      xhr.setRequestHeader('Content-type', 'application/json');
+      xhr.onreadystatechange = function() {
+        // Call this when the state changes
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          console.log("Server response:", xhr.responseText);
+          if (xhr.responseText) {
+            alert(xhr.responseText);
+          } else {
+            alert("Program appears to have run ok...");
+          }
+        }
+      };
+      xhr.send(brick);
     },
 
     saveProgram: function(evt) {
-      
+
       var steps = this.get('program').map(function (d) { return d.toAPI(); });
       var ret = {
         'steps': steps,
@@ -334,11 +355,9 @@ function(
       xhr.onreadystatechange = function() {
         // Call this when the state changes
         console.log("Server response:", xhr.responseText);
-        /*
         if (xhr.readyState == 4 && xhr.status == 200) {
           console.log("Server response:", xhr.responseText);
         }
-        */
       };
       xhr.send(ret_json);
     },
