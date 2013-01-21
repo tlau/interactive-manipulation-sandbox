@@ -1,0 +1,6 @@
+Name: rosgraph_msgs
+Description: Description of rosgraph_msgs
+Version: 1.9.40
+Cflags: -I/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/devel/include
+Libs: -L/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/devel/lib 
+Requires: message_runtime std_msgs

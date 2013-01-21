@@ -28,46 +28,48 @@ from executer_actions.msg import ExecuteAction, ExecuteGoal
 NODE_NAME = 'rosbif'
 NODE_ID = '/rosbif'
 
-TIMEOUT = 20     # Timeout, in seconds for actionlib operations
+TIMEOUT = 5      # Timeout, in 'rospy time' for actionlib operations
                  # I don't think this is respected by actionlib though ...
 
+# Until rospy becomes thread-safe, we need to make sure we initialize only once
 _ros_ready = False
 __ac = None
-def _init_ros():
-    logger.debug("INITIALIZING ROS NODE")
-
-    # Make sure we do the initialization only once
-    global _ros_ready
-    global __ac
-    if _ros_ready:
-        logger.debug("(ROS NODE WAS READY)")
-        return __ac
-
-    # Do a safe, non-blocking test to see if we can communicate with the ROS master
-    master = rosgraph.Master(NODE_ID)
-    try:
-        state = master.getSystemState()
-    except:
-        raise Exception("Unable to communicate with ROS master")
-
-    # If everything looks OK, try initializing rospy, etc.
-    rospy.init_node( NODE_NAME, anonymous=True, port=33330, tcpros_port=33331)
-    #rospy.init_node( NODE_NAME, anonymous=True)
-    _ros_ready = True
-
-    # Create an actionlib client and connect to server
-    __ac = actionlib.SimpleActionClient('/executer/execute', ExecuteAction)
-    #rc = __ac.wait_for_server(timeout=rospy.Duration( TIMEOUT))
-    rc = __ac.wait_for_server()
-    if not rc:
-        raise Exception("Timeout trying to connect to SMACH Executer server")
-    logger.debug("Successfully initiated ROS and actionlib client")
-    return __ac
 
 class RobotImpl:
-    def __init__(self):
+    def __init__(self, port=33330, tcpros_port=33331):
         '''Perform ROS initializetion'''
-        self._ac = _init_ros()
+        self._ac = self._init_ros(port,tcpros_port)
+
+    def _init_ros(self, port=33330, tcpros_port=33331):
+        logger.debug("Starting ROS Node initialization")
+
+        # Make sure we do the initialization only once
+        global _ros_ready
+        global __ac
+        if _ros_ready:
+            logger.warn("ROS Node was already initialized!")
+            return __ac
+
+        # Do a safe, non-blocking test to see if we can communicate with the ROS master
+        master = rosgraph.Master(NODE_ID)
+        try:
+            state = master.getSystemState()
+        except:
+            raise Exception("Unable to communicate with ROS master")
+        logger.debug("ROS Master is reachable, proceeding with node initialization. Will user ports %d and %d" % (port, tcpros_port))
+
+        # If everything looks OK, try initializing rospy, etc.
+        rospy.init_node( NODE_NAME, anonymous=True, port=port, tcpros_port=tcpros_port)
+        _ros_ready = True
+        logger.debug("ROS Node initialized. Proceeding with actionlib client initialization")
+
+        # Create an actionlib client and connect to server
+        __ac = actionlib.SimpleActionClient('/executer/execute', ExecuteAction)
+        rc = __ac.wait_for_server(timeout=rospy.Duration( TIMEOUT))
+        if not rc:
+            raise Exception("Timeout trying to connect to SMACH Executer server")
+        logger.debug("Successfully initiated ROS and actionlib client")
+        return __ac
 
     def navigate_to_pose(self, x, y):
         '''Navigates the robot to a given position in the map'''
@@ -122,11 +124,20 @@ class RobotImpl:
         return result
 
 if __name__ == '__main__':
-    r = RobotImpl()
-    if r.ping():
-        print "Ping 1: Success!"
-    else:
-        print "Ping 1: Failure"
+    # Configure standard console logging
+    logger.setLevel(logging.DEBUG)
+    lh = logging.StreamHandler()
+    lh.setFormatter(logging.Formatter("%(asctime)s:%(name)s:%(levelname)s:%(message)s"))
+    logger.addHandler(lh)
+
+    # Optional parameter: xmlrpc port
+    port = 33330
+    if len(sys.argv) > 1:
+        port = int(sys.argv[1])
+
+    # Simple program that executes 'ping' functions
+    r = RobotImpl(port=port,tcpros_port=port+1)
+    logger.info("Ping 1 (ROS): %s" % r.ping())
     rospy.sleep(1)
-    print "Ping 2: %s" % r.ac_ping()
+    logger.info("Ping 2 (actionlib): %s" % r.ac_ping())
     rospy.sleep(0.5)

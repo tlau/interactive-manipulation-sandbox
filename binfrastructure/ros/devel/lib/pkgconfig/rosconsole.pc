@@ -1,0 +1,6 @@
+Name: rosconsole
+Description: Description of rosconsole
+Version: 1.9.40
+Cflags: -I/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/ros_comm/tools/rosconsole/include -I/usr/include
+Libs: -L/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/devel/lib -lrosconsole -l:/usr/lib/libboost_regex-mt.so -l:/usr/lib/libboost_thread-mt.so -lpthread -l:/usr/lib/liblog4cxx.so
+Requires: cpp_common rostime
