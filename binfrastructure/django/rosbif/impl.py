@@ -51,8 +51,8 @@ def _init_ros():
         raise Exception("Unable to communicate with ROS master")
 
     # If everything looks OK, try initializing rospy, etc.
-    # rospy.init_node( NODE_NAME, anonymous=True, port=33336)
-    rospy.init_node( NODE_NAME, anonymous=True)
+    rospy.init_node( NODE_NAME, anonymous=True, port=33330, tcpros_port=33331)
+    #rospy.init_node( NODE_NAME, anonymous=True)
     _ros_ready = True
 
     # Create an actionlib client and connect to server
@@ -129,4 +129,4 @@ if __name__ == '__main__':
         print "Ping 1: Failure"
     rospy.sleep(1)
     print "Ping 2: %s" % r.ac_ping()
-    rospy.sleep(5)
+    rospy.sleep(0.5)
