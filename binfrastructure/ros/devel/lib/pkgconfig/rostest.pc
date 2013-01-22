@@ -1,0 +1,6 @@
+Name: rostest
+Description: Description of rostest
+Version: 1.9.40
+Cflags: -I/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/ros_comm/tools/rostest/include -I/usr/include
+Libs: -L/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/devel/lib -l:/usr/lib/libboost_thread-mt.so
+Requires: 

@@ -1,0 +1,6 @@
+Name: topic_tools
+Description: Description of topic_tools
+Version: 1.9.40
+Cflags: -I/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/devel/include -I/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/ros_comm/tools/topic_tools/include
+Libs: -L/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/devel/lib -ltopic_tools
+Requires: message_runtime rosconsole roscpp std_msgs xmlrpcpp

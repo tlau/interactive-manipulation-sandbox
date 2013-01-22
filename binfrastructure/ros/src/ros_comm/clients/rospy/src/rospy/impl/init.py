@@ -68,7 +68,7 @@ def _node_run_error(e):
     rospyerr(traceback.format_exc())
     signal_shutdown('error in XML-RPC server: %s'%(e))
 
-def start_node(environ, resolved_name, master_uri=None, port=None):
+def start_node(environ, resolved_name, master_uri=None, port=0, tcpros_port=0):
     """
     Load ROS slave node, initialize from environment variables
     @param environ: environment variables
@@ -79,11 +79,13 @@ def start_node(environ, resolved_name, master_uri=None, port=None):
     @type  master_uri: str
     @param port: override ROS_PORT: port of slave xml-rpc node
     @type  port: int
+    @param tcpros_port: override the port of the TCP server
+    @type  tcpros_port: int
     @return: node server instance
     @rtype rosgraph.xmlrpc.XmlRpcNode
     @raise ROSInitException: if node has already been started
     """
-    init_tcpros()
+    init_tcpros(tcpros_port)
     if not master_uri:
         master_uri = rosgraph.get_master_uri()
     if not master_uri:
@@ -93,12 +95,10 @@ def start_node(environ, resolved_name, master_uri=None, port=None):
     _set_caller_id(resolved_name) 
 
     handler = ROSHandler(resolved_name, master_uri)
-    print "!!!!>>> PORT = %s" % port
     node = rosgraph.xmlrpc.XmlRpcNode(port, handler, on_run_error=_node_run_error)
     node.start()
     while not node.uri and not is_shutdown():
         time.sleep(0.00001) #poll for XMLRPC init
-    print "!!!!>>> URI (now) = %s" % node.uri
     logging.getLogger("rospy.init").info("ROS Slave URI: [%s]", node.uri)
 
     while not handler._is_registered() and not is_shutdown():

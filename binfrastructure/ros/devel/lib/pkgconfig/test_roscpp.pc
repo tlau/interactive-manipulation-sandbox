@@ -1,0 +1,6 @@
+Name: test_roscpp
+Description: Description of test_roscpp
+Version: 1.9.40
+Cflags: -I/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/devel/include -I/usr/include
+Libs: -L/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/devel/lib -l:/usr/lib/libboost_signals-mt.so -l:/usr/lib/libboost_filesystem-mt.so -l:/usr/lib/libboost_system-mt.so
+Requires: message_runtime rosconsole rosgraph_msgs std_msgs xmlrpcpp

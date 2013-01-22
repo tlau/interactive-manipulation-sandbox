@@ -1,0 +1,6 @@
+Name: roscpp
+Description: Description of roscpp
+Version: 1.9.40
+Cflags: -I/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/devel/include -I/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/ros_comm/clients/roscpp/include -I/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/devel/include/ros -I/usr/include
+Libs: -L/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/devel/lib -lroscpp -l:/usr/lib/libboost_signals-mt.so -l:/usr/lib/libboost_filesystem-mt.so -l:/usr/lib/libboost_system-mt.so
+Requires: cpp_common message_runtime rosconsole roscpp_serialization roscpp_traits rosgraph_msgs rostime std_msgs xmlrpcpp

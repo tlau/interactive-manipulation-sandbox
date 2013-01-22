@@ -1,0 +1,2 @@
+set(test_rosservice_MSG_INCLUDE_DIRS )
+set(test_rosservice_MSG_DEPENDENCIES std_msgs)

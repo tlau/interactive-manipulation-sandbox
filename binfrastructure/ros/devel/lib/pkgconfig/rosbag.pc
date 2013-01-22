@@ -1,0 +1,6 @@
+Name: rosbag
+Description: Description of rosbag
+Version: 1.9.40
+Cflags: -I/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/ros_comm/tools/rosbag/include
+Libs: -L/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/devel/lib -lrosbag
+Requires: rosconsole roscpp topic_tools xmlrpcpp

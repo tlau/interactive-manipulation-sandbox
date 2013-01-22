@@ -44,8 +44,6 @@ See U{http://ros.org/wiki/rospy}
 # dictionaries, but the rospy codebase isn't quite in shape for that
 # yet
 
-print "!!!!!!!!!!!!!!!!!!HACKED rospy VERSION!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-
 from std_msgs.msg import Header
 
 from .client import spin, myargv, init_node, \
