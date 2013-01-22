@@ -202,7 +202,6 @@ class RegManager(RegistrationListener):
         @param master_uri: Master URI
         @type  master_uri: str
         """
-        print "!!!!!--- _uri %s" % uri
         self.registered = False 
         self.master_uri = master_uri
         self.uri = uri

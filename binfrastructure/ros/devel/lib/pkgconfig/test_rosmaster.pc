@@ -1,0 +1,6 @@
+Name: test_rosmaster
+Description: Description of test_rosmaster
+Version: 1.9.40
+Cflags: -I/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/devel/include
+Libs: -L/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/devel/lib 
+Requires: 

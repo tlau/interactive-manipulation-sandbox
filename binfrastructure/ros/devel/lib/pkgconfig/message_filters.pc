@@ -1,0 +1,6 @@
+Name: message_filters
+Description: Description of message_filters
+Version: 1.9.40
+Cflags: -I/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/ros_comm/utilities/message_filters/include
+Libs: -L/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/devel/lib -lmessage_filters
+Requires: roscpp xmlrpcpp rosconsole

@@ -66,9 +66,6 @@ from rospy.exceptions import ROSInternalException, TransportException, Transport
 from rospy.msg import deserialize_messages, serialize_message
 from rospy.service import ServiceException
 
-def logdebug( str):
-    print "!!! " + str
-
 from rospy.impl.transport import Transport, BIDIRECTIONAL
 
 logger = logging.getLogger('rospy.tcpros')
@@ -122,7 +119,7 @@ class TCPServer(object):
     ROS_IP/ROS_HOSTNAME environment variables
     """
 
-    def __init__(self, inbound_handler, port=33333):
+    def __init__(self, inbound_handler, port=0):
         """
         Setup a server socket listening on the specified port. If the
         port is omitted, will choose any open port.
@@ -133,7 +130,6 @@ class TCPServer(object):
         @type  port: int
         """
         self.port = port #will get overwritten if port=0
-        print "!!!!!! Parameterized port: %s" % port
         self.addr = None #set at socket bind
         self.is_shutdown = False
         self.inbound_handler = inbound_handler
@@ -158,10 +154,6 @@ class TCPServer(object):
         while not self.is_shutdown:
             try:
                 (client_sock, client_addr) = self.server_sock.accept()
-                try:
-                    print "!!!! got connection from %s in our port %s" % (client_addr, self.server_sock.getsockname()[1])
-                except:
-                    print "!!!! shutting down?"
             except socket.timeout:
                 continue
             except IOError as e:
@@ -178,7 +170,7 @@ class TCPServer(object):
                 if not self.is_shutdown:
                     traceback.print_exc()
                     logwarn("Failed to handle inbound connection due to socket error: %s"%e)
-        logdebug("TCPServer[%s] shutting down"% self.port)
+        logdebug("TCPServer[%s] shutting down", self.port)
 
     
     def get_full_addr(self):
@@ -218,21 +210,26 @@ class TCPServer(object):
 # the tcprosserver constructor. Constructor is called by init_tcpros()
 _tcpros_server = None
 
-def init_tcpros_server():
-    """starts the TCPROS server socket for inbound connections"""
+def init_tcpros_server(port=0):
+    """
+    starts the TCPROS server socket for inbound connections
+    @param port: listen on the provided port. If the port number is 0, the port will
+        be chosen randomly
+    @type  port: int
+    """
     global _tcpros_server
     if _tcpros_server is None:
-        _tcpros_server = TCPROSServer()
+        _tcpros_server = TCPROSServer(port=port)
         rospy.core.add_shutdown_hook(_tcpros_server.shutdown)
     return _tcpros_server
     
-def start_tcpros_server(port=0):
+def start_tcpros_server():
     """
     start the TCPROS server if it has not started already
     """
     if _tcpros_server is None:
         init_tcpros_server()
-    return _tcpros_server.start_server(port)
+    return _tcpros_server.start_server()
 
 # provide an accessor of this so that the TCPROS Server is entirely hidden from upper layers
 
@@ -263,8 +260,13 @@ class TCPROSServer(object):
     called during init_publisher().
     """
     
-    def __init__(self):
-        """ctor."""
+    def __init__(self, port=0):
+        """
+        Constructur
+        @param port: port number to bind to (default 0/any)
+        @type  port: int
+        """
+        self.port = port
         self.tcp_ros_server = None #: server for receiving tcp conn
         self.lock = threading.Lock()
         # should be set to fn(sock, client_addr, header) for topic connections
@@ -272,18 +274,16 @@ class TCPROSServer(object):
         # should be set to fn(sock, client_addr, header) for service connections        
         self.service_connection_handler = _error_connection_handler
         
-    def start_server(self, port=0):
+    def start_server(self):
         """
         Starts the TCP socket server if one is not already running
-        @param port: port number to bind to (default 0/any)
-        @type  port: int
         """
         if self.tcp_ros_server:
             return
         with self.lock:
             try:
                 if not self.tcp_ros_server:
-                    self.tcp_ros_server = TCPServer(self._tcp_server_callback, port) 
+                    self.tcp_ros_server = TCPServer(self._tcp_server_callback, self.port) 
                     self.tcp_ros_server.start()
             except Exception as e:
                 self.tcp_ros_server = None

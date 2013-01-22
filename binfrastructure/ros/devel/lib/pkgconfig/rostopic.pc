@@ -1,0 +1,6 @@
+Name: rostopic
+Description: Description of rostopic
+Version: 1.9.40
+Cflags: -I
+Libs: -L/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/devel/lib 
+Requires: 
