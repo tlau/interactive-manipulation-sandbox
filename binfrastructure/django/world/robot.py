@@ -8,11 +8,14 @@ logger = logging.getLogger('robot')
 
 
 class Robot:
+    __impl = None
 
     def __init__(self):
-        logger.debug("Initializing the robot proxy.")
-        self._impl = rosbif.impl.RobotImpl()
-        logger.debug("robot proxy initialized")
+        if Robot.__impl == None:
+            logger.debug("Initializing the robot proxy.")
+            Robot.__impl = rosbif.impl.RobotImpl()
+            logger.debug("robot proxy initialized")
+        self.__impl = Robot.__impl
 
         # # TO NOTE:
         #
@@ -52,7 +55,7 @@ class Robot:
         params: { 'pose': {'x': (number), 'y': (number), 'angle': (number)} }
         """
         logger.info('action GO_TO_POSE invoked with pose=%s' % pose)
-        self._impl.navigate_to_pose(pose['x'], pose['y'])
+        self.__impl.navigate_to_pose(pose['x'], pose['y'])
 
     def pick_up_bin(self, bin_id_list=[], **kwargs):
         """

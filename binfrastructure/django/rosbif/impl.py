@@ -28,8 +28,8 @@ from executer_actions.msg import ExecuteAction, ExecuteGoal
 NODE_NAME = 'rosbif'
 NODE_ID = '/rosbif'
 
-TIMEOUT = 5      # Timeout, in 'rospy time' for actionlib operations
-                 # I don't think this is respected by actionlib though ...
+TIMEOUT = 10      # Timeout, in 'rospy time' for actionlib operations
+                  # I don't think this is respected by actionlib though ...
 
 # Until rospy becomes thread-safe, we need to make sure we initialize only once
 _ros_initialized = False
@@ -160,7 +160,11 @@ if __name__ == '__main__':
 
     # Simple program that executes 'ping' functions
     r = RobotImpl(port=port,tcpros_port=port+1)
+    logger.info("INITIALIZATION FINISHED SUCCESSFULLY")
+    rospy.sleep(5)
+    '''
     logger.info("Ping 1 (ROS): %s" % r.ping())
     rospy.sleep(1)
     logger.info("Ping 2 (actionlib): %s" % r.ac_ping())
     rospy.sleep(0.5)
+    '''
