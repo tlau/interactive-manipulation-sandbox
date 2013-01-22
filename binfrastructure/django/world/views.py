@@ -9,7 +9,7 @@ from world.models import BIFAction, BIFProgram
 from serializers import ProgramSerializer
 
 import logging
-from world.robot import robot_proxy as robot
+from world.robot import get_robot_proxy
 from world.models import API_call_choices
 
 API_names = [c[0] for c in API_call_choices]
@@ -185,6 +185,7 @@ def run_program(request):
                 return Response({'detail': msg},
                                 status=status.HTTP_400_BAD_REQUEST)
 
+            robot = get_robot_proxy()
             robot_api_call = getattr(robot, fn_name)
             params = step['params']
 

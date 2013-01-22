@@ -12,6 +12,7 @@ class Robot:
     def __init__(self):
         logger.debug("Initializing the robot proxy.")
         self._impl = rosbif.impl.RobotImpl()
+        logger.debug("robot proxy initialized")
 
         # # TO NOTE:
         #
@@ -81,4 +82,9 @@ class Robot:
 # Intantiate and initialize the Robot only once,
 # when the system imports this module.
 #
-robot_proxy = Robot()
+_robot_proxy = None
+def get_robot_proxy():
+    global _robot_proxy
+    if _robot_proxy is None:
+        _robot_proxy = Robot()
+    return _robot_proxy

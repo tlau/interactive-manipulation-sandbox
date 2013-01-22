@@ -32,7 +32,7 @@ TIMEOUT = 5      # Timeout, in 'rospy time' for actionlib operations
                  # I don't think this is respected by actionlib though ...
 
 # Until rospy becomes thread-safe, we need to make sure we initialize only once
-_ros_ready = False
+_ros_initialized = False
 __ac = None
 
 class RobotImpl:
@@ -44,11 +44,12 @@ class RobotImpl:
         logger.debug("Starting ROS Node initialization")
 
         # Make sure we do the initialization only once
-        global _ros_ready
+        global _ros_initialized
         global __ac
-        if _ros_ready:
+        if _ros_initialized:
             logger.warn("ROS Node was already initialized!")
             return __ac
+        _ros_initialized = True
 
         # Do a safe, non-blocking test to see if we can communicate with the ROS master
         master = rosgraph.Master(NODE_ID)
@@ -56,11 +57,10 @@ class RobotImpl:
             state = master.getSystemState()
         except:
             raise Exception("Unable to communicate with ROS master")
-        logger.debug("ROS Master is reachable, proceeding with node initialization. Will user ports %d and %d" % (port, tcpros_port))
+        logger.debug("ROS Master is reachable, proceeding with node initialization. Will use ports %d and %d" % (port, tcpros_port))
 
         # If everything looks OK, try initializing rospy, etc.
         rospy.init_node( NODE_NAME, anonymous=True, port=port, tcpros_port=tcpros_port)
-        _ros_ready = True
         logger.debug("ROS Node initialized. Proceeding with actionlib client initialization")
 
         # Create an actionlib client and connect to server
@@ -125,10 +125,33 @@ class RobotImpl:
 
 if __name__ == '__main__':
     # Configure standard console logging
-    logger.setLevel(logging.DEBUG)
-    lh = logging.StreamHandler()
-    lh.setFormatter(logging.Formatter("%(asctime)s:%(name)s:%(levelname)s:%(message)s"))
-    logger.addHandler(lh)
+    logging.config.dictConfig({
+        'version': 1,
+        'formatters': {
+            'verbose': {
+                'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+            }
+        },
+        'handlers': {
+            'console': {
+                'level': 'DEBUG',
+                'class': 'logging.StreamHandler',
+                'formatter': 'verbose'
+            }
+        },
+        'loggers': {
+            'robot': {
+                'handlers': ['console'],
+                'propagate': True,
+                'level': 'DEBUG'
+            },
+            'rospy': {
+                'handlers': ['console'],
+                'propagate': True,
+                'level': 'DEBUG'
+            }
+        }
+    })
 
     # Optional parameter: xmlrpc port
     port = 33330
