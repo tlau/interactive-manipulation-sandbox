@@ -167,6 +167,9 @@ def run_program(request):
     try:
         # Create objects without save()'ing the to the database yet.
         bif_actions = [BIFAction.from_dict(step) for step in program['steps']]
+        # Add step numbers
+        for i in range(len(bif_actions)):
+            bif_actions[i].step_number = i+1
     except (TypeError, ValueError) as e:
         msg = ('Failed to create a BIFAction from dict representation: %s' % e)
         logger.debug(msg)
