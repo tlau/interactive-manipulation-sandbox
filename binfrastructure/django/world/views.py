@@ -12,13 +12,14 @@ import logging
 from world.robot import get_robot_proxy
 from world.models import API_call_choices
 
-API_names = [c[0] for c in API_call_choices]
-logger = logging.getLogger('dev')
+import threading
+import time
 
+API_names = [c[0] for c in API_call_choices]
+logger = logging.getLogger('bif.view')
 
 def index(request):
     return render_to_response('index.html', {'user': request.user})
-
 
 # "programs" endpoint.
 
@@ -139,9 +140,16 @@ def programs(request, format=None):
 def run_program(request):
     """Run the program POSTed, without saving it."""
 
+    # We'll use a CPU object to submit the program for execution on a separate thread
+    # Note that the first time we call this it needs to be initialized, so it may
+    # a little while to respond
+    cpu = get_cpu()
+    if cpu.running == True:
+        return Response({'detail': 'A previous program is still executing'},
+            status=status.HTTP_400_BAD_REQUEST)
+
     # NOTE 1:
     # Trust that the POSTed program is valid.
-
     program = request.DATA
     logger.info('Excuting program "%s".' % program['name'])
 
@@ -164,57 +172,25 @@ def run_program(request):
         logger.debug(msg)
         return Response({'detail': msg},
                         status=status.HTTP_400_BAD_REQUEST)
-    # The following code creates the (temporary) database entities.
-    bif_program = BIFProgram(name=program['name'])
-    bif_program.save()
-    bif_program.replace_step_sequence(bif_actions)
 
-    # Convert BIFAction instances into dict repr's.
-    steps = [action.to_dict() for action in bif_actions]
-
-    try:
-
-        for step in steps:
-            # Pick on the dict repr of the step, to produce the API call.
-
-            fn_name = step['action']
-            if fn_name not in API_names:
-                msg = ('Bad API call (%s) from program "%s".'
-                       % (fn_name, program['name']))
-                logger.debug(msg)
-                return Response({'detail': msg},
-                                status=status.HTTP_400_BAD_REQUEST)
-
-            robot = get_robot_proxy()
-            robot_api_call = getattr(robot, fn_name)
-            params = step['params']
-
-            try:
-
-                # ...Blocking call...
-                robot_api_call(**params)
-
-            except (TypeError, ValueError) as e:
-                msg = ('API call "%s", bad parameters: %s'
-                       % (fn_name, params))
-                logger.debug(msg)
-                return Response({'detail': msg, 'exception': '%s' % e},
-                                status=status.HTTP_400_BAD_REQUEST)
-            except Exception as e:
-                msg = ('API call "%s", exception: %s'
-                       % (fn_name, e))
-                logger.debug(msg)
-                return Response({'detail': msg},
-                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            finally:
-                # Run clean up on the robot.
-                pass
-    finally:
-        # Clean up the temporary database entities.
-        bif_program.delete()  # mean cascade kills all actions.
+    
+    # Submit the program for execution now
+    cpu.execute( program['name'], bif_actions)
 
     return Response(status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+@parser_classes([JSONParser])
+def run_status(request):
+    """
+    Get the current status of the currently executing program
+    """
+    cpu = get_cpu()
+    if cpu.running:
+        return Response({'detail': "Program running step %d out of %d" % ( cpu.ip, len(cpu.steps))},
+            status=status.HTTP_200_OK)
+    else:
+        return Response({'detail': "Program interpreter idle"})
 
 @api_view(['POST'])
 @parser_classes([JSONParser])
@@ -254,3 +230,107 @@ def run_step(request):
         # Run clean up on the robot.
         pass
     return Response(status=status.HTTP_200_OK)
+
+class CPU(object):
+    '''
+    This class will be in charge of executing a given program (and just one program at a time)
+    and keep track of its progress. It will execute on a separate thread to allow the Web UI
+    to perform requests about the progress of the execution of the program
+    '''
+    def __init__(self, *args, **kwArgs):
+        super(CPU, self).__init__(*args, **kwArgs)
+        # Force initialization of robot (if it wasn't done yet) in main thread
+        self.robot = get_robot_proxy()        
+        self.reset()
+        self.logger = logging.getLogger('bif.cpu')
+
+    def reset(self):
+        '''
+        Initialize internal status registers
+        '''
+        self.running = False    # Program execution in progress?
+        self.ip = None          # Current step being executed
+        self.last_step_ts = None # Timestamp when last step started execution
+
+    def execute(self, name, bif_actions): 
+        if self.running:
+            raise Exception("CPU is running another program at the moment. Running more than one program simultaneously is not supported")
+
+        # At this point, there shouldn't be any programs stored in the database.
+        # If there are any it's a bug. Let's clean them up just in case
+        stale_programs = BIFProgram.objects.all()
+        if len(stale_programs) > 0:
+            self.logger.warn("There were stale programs in the database: %s! Proceeding \
+                to purge them" % ' '.join([program.name for program in stale_programs]))
+            stale_programs.delete()
+
+        # We save the provided list of BIFAction objects as a program in the database
+        # and then we execute. There should always be a single program stored in the
+        # database at any one given time
+        self.program = BIFProgram(name=name)
+        self.program.save()
+        self.program.replace_step_sequence(bif_actions)
+
+        self.steps = [action.to_dict() for action in self.program.step_sequence]
+
+        runner = threading.Thread(target=self.run,name='CPU-thread')
+        runner.start()
+
+    def run(self):
+        self.logger.debug("Starting execution of program: %s (%d steps)" % (self.program, len(self.steps)))
+        try:
+            for step in self.steps:
+                # Keep track of the last executed action
+                self.ip = step['step_number']
+                self.last_step_ts = time.time()
+                self.logger.debug("Executing step %d (%s)" % (self.ip, step['action']))
+
+                # Pick on the dict repr of the step, to produce the API call.
+                fn_name = step['action']
+                if fn_name not in API_names:
+                    msg = ('Bad API call (%s) from program "%s".'
+                           % (fn_name, self.program.name))
+                    logger.error(msg)
+                    raise Exception(msg)
+
+                robot_api_call = getattr(self.robot, fn_name)
+                params = step['params']
+
+                try:
+
+                    # ...Blocking call...
+                    robot_api_call(**params)
+
+                except (TypeError, ValueError) as e:
+                    msg = ('API call "%s", bad parameters: %s'
+                           % (fn_name, params))
+                    logger.error(msg)
+                except Exception as e:
+                    msg = ('API call "%s", exception: %s'
+                           % (fn_name, e))
+                    logger.error(msg)
+                finally:
+                    # TODO: Review error handling here. Think about exiting
+                    # the program when there is an exception, returning an error
+                    # message to the user, etc.
+                    self.logger.debug("Step finished")
+                    pass
+        finally:
+            self.logger.info("Program %s execution finished" % self.program.name)
+
+            # Clean up the temporary database entities.
+            self.program.delete()  # mean cascade kills all actions.
+
+            # Reset the CPU registers 
+            # TODO: Instead, we should move to a 'finished' state to:
+            # a- trigger appropriate events to listeners (clients)
+            # b- leave information about last execution status to be queried
+            self.reset()
+
+_cpu = None
+def get_cpu():
+    global _cpu
+    if _cpu is None:
+        _cpu = CPU()
+    return _cpu
+

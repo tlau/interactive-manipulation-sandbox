@@ -144,7 +144,8 @@ class BIFAction(models.Model):
         params = json.loads(self.params)
         action_dict = {
             'action': self.name,
-            'params': params
+            'params': params,
+            'step_number': self.step_number
         }
         return action_dict
 

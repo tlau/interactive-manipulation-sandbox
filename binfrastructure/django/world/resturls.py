@@ -50,4 +50,5 @@ urlpatterns = patterns('',
 
     url(r'^run/program$', world.views.run_program),
     url(r'^run/step$', world.views.run_step),
+    url(r'^run/status$', world.views.run_status),
 )
