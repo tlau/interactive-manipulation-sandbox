@@ -189,6 +189,10 @@ def run_status(request):
     Get the current status of the currently executing program
     """
     cpu = get_cpu()
+    print cpu
+    print cpu.running
+    print cpu.ip
+    print cpu.steps
     if cpu.running:
         return Response({'detail': "Program running step %d out of %d" % ( cpu.ip, len(cpu.steps))},
             status=status.HTTP_200_OK)
@@ -246,6 +250,7 @@ class CPU(object):
         self.robot = get_robot_proxy()        
         self.reset()
         self.logger = logging.getLogger('bif.cpu')
+        self.logger.debug("CPU.__init__(%d)" % id(self))
 
     def reset(self):
         '''
@@ -258,26 +263,32 @@ class CPU(object):
     def execute(self, name, bif_actions): 
         if self.running:
             raise Exception("CPU is running another program at the moment. Running more than one program simultaneously is not supported")
+        self.running = True
 
-        # At this point, there shouldn't be any programs stored in the database.
-        # If there are any it's a bug. Let's clean them up just in case
-        stale_programs = BIFProgram.objects.all()
-        if len(stale_programs) > 0:
-            self.logger.warn("There were stale programs in the database: %s! Proceeding \
-                to purge them" % ' '.join([program.name for program in stale_programs]))
-            stale_programs.delete()
+        try:
+            # At this point, there shouldn't be any programs stored in the database.
+            # If there are any it's a bug. Let's clean them up just in case
+            stale_programs = BIFProgram.objects.all()
+            if len(stale_programs) > 0:
+                self.logger.warn("There were stale programs in the database: %s! Proceeding \
+                    to purge them" % ' '.join([program.name for program in stale_programs]))
+                stale_programs.delete()
 
-        # We save the provided list of BIFAction objects as a program in the database
-        # and then we execute. There should always be a single program stored in the
-        # database at any one given time
-        self.program = BIFProgram(name=name)
-        self.program.save()
-        self.program.replace_step_sequence(bif_actions)
+            # We save the provided list of BIFAction objects as a program in the database
+            # and then we execute. There should always be a single program stored in the
+            # database at any one given time
+            self.program = BIFProgram(name=name)
+            self.program.save()
+            self.program.replace_step_sequence(bif_actions)
 
-        self.steps = [action.to_dict() for action in self.program.step_sequence]
+            self.steps = [action.to_dict() for action in self.program.step_sequence]
 
-        runner = threading.Thread(target=self.run,name='CPU-thread')
-        runner.start()
+            runner = threading.Thread(target=self.run,name='CPU-thread')
+            runner.start()
+        except e:
+            self.logger.error("Exception received before starting program execution", e)
+            raise Exception(e)
+            self.reset()
 
     def run(self):
         self.logger.debug("Starting execution of program: %s (%d steps)" % (self.program, len(self.steps)))
