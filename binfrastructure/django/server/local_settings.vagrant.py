@@ -21,6 +21,38 @@ TEMPLATE_DIRS = (
     '/home/vagrant/binfrastructure/django/templates/'
 )
 
+'''
+# Julian's logging configuration:
+LOGGING = {
+    'version': 1,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)5s:%(asctime)s:%(name)-15s:%(threadName)s:%(message)s'
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        }
+    },
+    'loggers': {
+        'bif': {
+            'handlers': ['console'],
+            'propagate': True,
+            'level': 'DEBUG'
+        },
+        'rospy': {
+            'handlers': ['console'],
+            'propagate': True,
+            'level': 'INFO'
+        }
+    }
+}
+'''
+
+# Elvio's logging configuration
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,

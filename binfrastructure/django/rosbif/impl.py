@@ -8,7 +8,7 @@ ROSPY_SRC='/'.join(os.path.abspath(__file__).split('/')[:-3]) + '/ros/src/ros_co
 sys.path.insert(0,ROSPY_SRC)
 
 import logging
-logger = logging.getLogger('robot')
+logger = logging.getLogger('bif.rosbif')
 
 # Fail to initialize if the ROS environment is not set-up
 import os
