@@ -4,7 +4,7 @@ Implement the API calls to effect the robot.
 import logging
 import rosbif.impl
 
-logger = logging.getLogger('robot')
+logger = logging.getLogger('bif.robot')
 
 
 class Robot:

@@ -342,7 +342,7 @@ function(
           if (xhr.responseText) {
             alert(xhr.responseText);
           } else {
-            alert("Program finished successfully.");
+            alert("Program submitted successfully.");
           }
         }
       };
