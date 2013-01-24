@@ -6,6 +6,8 @@ requirejs.config({
     jquery       : 'libs/jquery',
     d3           : 'libs/d3',
     blockUI      : 'libs/jquery.blockUI',
+    // socket.io
+    io           : 'libs/socket.io',
     // Ember
     handlebars   : 'libs/handlebars',
     ember        : 'libs/ember',

@@ -1,6 +1,7 @@
 define([
   'ember',
   'app',
+  'io',
   'controllers/application',
   'controllers/monitor',
   'views/application',
@@ -12,6 +13,7 @@ define([
 function(
   Ember,
   App,
+  io,
   ApplicationController,
   MonitorController,
   ApplicationView,
