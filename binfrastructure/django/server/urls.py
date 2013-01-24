@@ -7,7 +7,6 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-
     url(r'^admin/', include(admin.site.urls)),
 
     # OpenID Login through Google:
@@ -24,4 +23,8 @@ urlpatterns = patterns('',
 
     # Provide currently-logged-in client information
     url(r'^client','server.views.client'),
+
+    # socket.io integration
+    url(r'^socket\.io','sockets.views.socketio'),
 )
+print "-"  # I don't know why if I remove this print then the module fails to load
