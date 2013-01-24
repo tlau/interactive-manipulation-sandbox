@@ -156,7 +156,7 @@ INSTALLED_APPS = (
     'south',
 
     # Server applications
-#    'sockets',
+    'sockets',
     'world',
 )
 

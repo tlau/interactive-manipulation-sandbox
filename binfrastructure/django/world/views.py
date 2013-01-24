@@ -238,6 +238,10 @@ def run_step(request):
         pass
     return Response(status=status.HTTP_200_OK)
 
+class DummyCPUEvents(object):
+    def fire_step(self, step_number):
+        pass
+
 class CPU(object):
     '''
     This class will be in charge of executing a given program (and just one program at a time)
@@ -251,6 +255,7 @@ class CPU(object):
         self.reset()
         self.logger = logging.getLogger('bif.cpu')
         self.logger.debug("CPU.__init__(%d)" % id(self))
+        self.event_methods = DummyCPUEvents()
 
     def reset(self):
         '''
@@ -327,6 +332,8 @@ class CPU(object):
                     # TODO: Review error handling here. Think about exiting
                     # the program when there is an exception, returning an error
                     # message to the user, etc.
+
+                    self.event_methods.fire_step( self.ip)
                     self.logger.debug("Step finished")
                     pass
         finally:
