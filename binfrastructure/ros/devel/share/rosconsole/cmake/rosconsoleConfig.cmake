@@ -96,7 +96,7 @@ if(NOT "/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/s
   endforeach()
 endif()
 
-set(libraries "rosconsole;/usr/lib/libboost_regex-mt.so;/usr/lib/libboost_thread-mt.so;pthread;/usr/lib/liblog4cxx.so")
+set(libraries "rosconsole;/usr/lib/libboost_regex-mt.so;/usr/lib/libboost_thread-mt.so;/usr/lib/liblog4cxx.so")
 foreach(library ${libraries})
   if(TARGET ${library})
     list(APPEND rosconsole_LIBRARIES ${library})

@@ -1,11 +1,12 @@
 # keep symbol table as clean as possible by deleting all unnecessary symbols
 
 from os import path as os_path
+from os import sep as os_sep
 from sys import path as sys_path
 
 from pkgutil import extend_path
 
-__extended_path = "/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/src/ros_comm/clients/rospy/src".split(";")
+__extended_path = ("/".join(__file__.split(os_sep)[:-6]) + "/src/ros_comm/clients/rospy/src").split(";")
 for p in reversed(__extended_path):
     sys_path.insert(0, p)
     del p

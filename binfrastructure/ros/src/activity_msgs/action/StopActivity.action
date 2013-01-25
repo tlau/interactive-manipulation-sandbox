@@ -1,0 +1,10 @@
+# id of activity to stop
+uint64 activity_id
+
+---
+
+ActivityErrorCode error_code
+
+---
+
+# no feedback

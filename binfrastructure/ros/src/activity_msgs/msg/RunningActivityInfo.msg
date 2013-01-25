@@ -1,0 +1,2 @@
+string activity_type
+uint64 activity_id

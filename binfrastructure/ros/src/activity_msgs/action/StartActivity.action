@@ -1,0 +1,18 @@
+uint64 desired_activity_id
+
+string activity_type
+
+# JSON encoded goal message
+string goal
+
+---
+
+# actual id decided on (may be different than the requested
+# id, if that one already existed)
+uint64 activity_id
+
+ActivityErrorCode error_code
+
+---
+
+# no feedback

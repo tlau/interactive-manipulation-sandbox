@@ -6,7 +6,7 @@
 # Supported command line options:
 # --extend: skips the undoing of changes from a previously sourced setup file
 
-SETUP_UTIL="/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/devel/_setup_util.py"
+SETUP_UTIL="${SCRIPT_PATH}/_setup_util.py"
 
 if [ ! -f "$SETUP_UTIL" ]; then
   echo "Missing Python script: $SETUP_UTIL"
