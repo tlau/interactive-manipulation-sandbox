@@ -1,0 +1,6 @@
+Name: activity_msgs
+Description: Description of activity_msgs
+Version: 0.1.1
+Cflags: -I/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/devel/include
+Libs: -L/home/julian/aaad/interactive-manipulation-sandbox/binfrastructure/ros/devel/lib 
+Requires: actionlib_msgs

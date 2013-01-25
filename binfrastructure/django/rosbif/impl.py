@@ -4,8 +4,11 @@ of the components in the Web application will access the robot through this inte
 '''
 # HACK: Prepend rospy-from-source location in python path while we work with hacked rospy
 import os, sys
-ROSPY_SRC='/'.join(os.path.abspath(__file__).split('/')[:-3]) + '/ros/src/ros_comm/clients/rospy/src'
-sys.path.insert(0,ROSPY_SRC)
+ROS_DIR='/'.join(os.path.abspath(__file__).split('/')[:-3]) + '/ros/src'
+ROSPY=ROS_DIR + '/src/ros_comm/clients/rospy/src'
+sys.path.insert(0,ROSPY)
+ACTIVITY_MSGS=ROS_DIR + '/devel/lib/python2.7/dist-packages/activity_msgs'
+sys.path.insert(0,ACTIVITY_MSGS)
 
 import logging
 logger = logging.getLogger('bif.rosbif')
@@ -22,13 +25,13 @@ import rospy
 import rosgraph
 import rosnode
 import actionlib
-import roslib; roslib.load_manifest("executer_actions")
-from executer_actions.msg import ExecuteAction, ExecuteGoal
+import roslib; roslib.load_manifest("activity_msgs")
+from activity_msgs.msg import ExecuteAction, ExecuteGoal
 
 NODE_NAME = 'rosbif'
 NODE_ID = '/rosbif'
 
-TIMEOUT = 10      # Timeout, in 'rospy time' for actionlib operations
+TIMEOUT = 20      # Timeout, in 'rospy time' for actionlib operations
                   # I don't think this is respected by actionlib though ...
 
 # Until rospy becomes thread-safe, we need to make sure we initialize only once
@@ -64,7 +67,7 @@ class RobotImpl:
         logger.debug("ROS Node initialized. Proceeding with actionlib client initialization")
 
         # Create an actionlib client and connect to server
-        __ac = actionlib.SimpleActionClient('/executer/execute', ExecuteAction)
+        __ac = actionlib.SimpleActionClient('/activity_manager/execute', ExecuteAction)
         rc = __ac.wait_for_server(timeout=rospy.Duration( TIMEOUT))
         if not rc:
             raise Exception("Timeout trying to connect to SMACH Executer server")
@@ -77,7 +80,7 @@ class RobotImpl:
         goal.action = '''
 {
     "type": "action"
-  , "name": "NavigateToPose"
+  , "name": "binbot_action/NavigateToPose"
   , "inputs":
     {
         "frame_id": "/map"
@@ -111,7 +114,7 @@ class RobotImpl:
         goal.action = '''
 {
     "type": "action"
-  , "name": "Dummy"
+  , "name": "binbot_actions/Dummy"
   , "inputs": {}
 }
 '''
@@ -129,7 +132,7 @@ if __name__ == '__main__':
         'version': 1,
         'formatters': {
             'verbose': {
-                'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+                'format': '%(levelname)5s:%(asctime)s:%(name)-15s:%(threadName)s:%(message)s'
             }
         },
         'handlers': {
@@ -140,7 +143,7 @@ if __name__ == '__main__':
             }
         },
         'loggers': {
-            'robot': {
+            'bif': {
                 'handlers': ['console'],
                 'propagate': True,
                 'level': 'DEBUG'
